@@ -6,12 +6,25 @@ title: blank # the website title (if blank, full name will be used instead)
 first_name: Mohammad
 middle_name: Reza
 last_name: Rezaeian
-email: rezaeian.moh at gmail dot com
 description: > # the ">" symbol means to ignore newlines until "footer_text:"
   My personal website.
 footer_text: >
   Powered by <a href="https://jekyllrb.com/" target="_blank">Jekyll</a>.
 keywords: rezaeian, algo-trading, quant
+
+# Social settings
+# Please fill in your social media user names.
+# The icons are automatically chosen based on the platform name.
+social_links:
+  email: rezaeian.mh@gmail.com
+  github: MohammadRezaRezaeian
+  linkedin: mohammad-reza-rezaeian-292761261 # This is now disabled
+  # twitter: your-twitter-handle
+  # scholar: your_google_scholar_id # Add your Google Scholar ID here
+  # inspirehep: your_inspirehep_id # Add your Inspire HEP ID here
+  # mastodon: your-mastodon-server-and-username
+  # rss: true # uncomment to show RSS icon
+
 lang: en # the language of your site (for example: en, fr, cn, ru, etc.)
 icon: ⚛️ # the emoji used as the favicon (alternatively, provide image name in /assets/img/)
 
@@ -211,7 +224,7 @@ plugins:
   - jekyll-tabs
   - jekyll-terser
   - jekyll-toc
-  - jekyll-twitter-plugin
+  #- jekyll-twitter-plugin
   - jemoji
 
 # Sitemap settings
@@ -346,7 +359,7 @@ external_links:
 # MAKE SURE imagemagick is installed and on your PATH before enabling imagemagick. In a terminal, run:
 #   convert -version
 imagemagick:
-  enabled: true # enables responsive images for your site (recommended, see https://github.com/alshedivat/al-folio/issues/537)
+  enabled: false # enables responsive images for your site (recommended, see https://github.com/alshedivat/al-folio/issues/537)
   widths:
     - 480
     - 800
