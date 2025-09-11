@@ -228,7 +228,6 @@ plugins:
   - jemoji
   - jekyll-scholar
 
-
 # Sitemap settings
 defaults:
   - scope:
@@ -655,3 +654,4 @@ jsonresume:
   - languages
   - interests
   - references
+
