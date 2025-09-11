@@ -41,11 +41,11 @@ jobs:
       - name: Setup Python
         uses: actions/setup-python@v5
         with:
-          python-version: '3.x'
+          python-version: "3.x"
       - name: Setup Ruby
         uses: ruby/setup-ruby@v1
         with:
-          ruby-version: '3.2' # Use a version compatible with activesupport
+          ruby-version: "3.2" # Use a version compatible with activesupport
           bundler-cache: true # runs 'bundle install' and caches installed gems
       - name: Install Jupyter
         run: pip install jupyter

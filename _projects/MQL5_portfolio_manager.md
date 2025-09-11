@@ -8,7 +8,6 @@ category: MQL
 related_publications: true
 ---
 
-
 ## Table of Contents
 
 - [Table of Contents](#table-of-contents)
@@ -23,7 +22,7 @@ related_publications: true
 
 ## Overview
 
-The primary goal of this project is to minimize dependencies within the MQL5 Expert Advisor framework while maintaining flexibility and extensibility. MQL5 provides predefined event-based global functions, including OnInit, OnTick, OnTradeTransaction, OnChartEvent, and OnDeinit. Codes are designed to reduce code dependencies during these function calls by clearly defining their roles. This modular approach ensures the program efficiently handles portfolio management tasks, such as strategy initialization, trade execution, and user interface updates, within each event-driven function. 
+The primary goal of this project is to minimize dependencies within the MQL5 Expert Advisor framework while maintaining flexibility and extensibility. MQL5 provides predefined event-based global functions, including OnInit, OnTick, OnTradeTransaction, OnChartEvent, and OnDeinit. Codes are designed to reduce code dependencies during these function calls by clearly defining their roles. This modular approach ensures the program efficiently handles portfolio management tasks, such as strategy initialization, trade execution, and user interface updates, within each event-driven function.
 
 ## Architecture
 
@@ -31,13 +30,11 @@ PortfolioEA's architecture is designed to be modular and extensible, centered ar
 
 To address the challenges of repetitive instructions, which impact both system accuracy and processing speed, PortfolioEA employs the Chain of Responsibility design pattern. By organizing strategy components into distinct tasks, the system filters which signals to process, optimizing efficiency. Additionally, a signal request object is used to carry all necessary data for trade execution. This object is passed through the task pipeline, where it is filtered and enriched with relevant data at each stage, ensuring precise and streamlined signal handling.
 
-
 ## Architecture Flowchart
 
 <div class="text-center">
     <img src="{{ '/assets/img/flowcharts/PortfolioManager_MQL5.svg' | relative_url }}" alt="Architecture Flowchart" class="img-fluid">
 </div>
-
 
 ## How It Works
 
@@ -49,25 +46,20 @@ Designing a portfolio management system like this involves navigating several ch
 
 ## Tasks
 
-To address the challenges of managing dependencies and optimizing performance, This project employs a task-based approach using the Chain of Responsibility design pattern. Each task is designed to handle specific limitations that determine which trading signals should be executed, ordered to minimize processing overhead and enhance execution speed. By breaking down the process into distinct tasks, the system efficiently filters and processes signals, ensuring that only valid signals proceed through the pipeline. The tasks are structured as follows: 
+To address the challenges of managing dependencies and optimizing performance, This project employs a task-based approach using the Chain of Responsibility design pattern. Each task is designed to handle specific limitations that determine which trading signals should be executed, ordered to minimize processing overhead and enhance execution speed. By breaking down the process into distinct tasks, the system efficiently filters and processes signals, ensuring that only valid signals proceed through the pipeline. The tasks are structured as follows:
 
 1. **Calendaer**:
    - Filters out signals during market times when trading is not desired, based on calendar events, preventing unnecessary processing. This task leverages the OnTimer function to periodically check market conditions, reducing the need to process every tick received in the OnTick function, thereby optimizing performance.
-   
 2. **Strategy/Symbol Calendaer**:
    - Validates strategies by checking their specific calendar constraints, symbol trading hours, and execution permissions. This task ensures that each strategy and its associated symbols comply with broker and account restrictions, as well as strategy-specific execution time rules, filtering out signals that do not meet these criteria early in the pipeline.
-   
 3. **PortfolioRulesTask**:
    - forces portfolio-level constraints, which include both inherent limitations derived from the portfolio's nature (e.g., risk thresholds, capital allocation) and user-defined rules (e.g., maximum exposure, position limits). This task also populates ticket data, such as trading volume, ensuring that valid signals are enriched with necessary parameters for execution.
-   
 4. **SignalObserverTask**:
    - Evaluates strategy logic to generate entry and exit signals based on predefined conditions. To handle complex or multiple strategies efficiently, it is strongly recommended to implement the Observer Design Pattern, allowing flexible monitoring of strategy signals. This task also enriches tickets with additional request data, such as signal-specific parameters, to prepare them for final execution.
-   
 5. **OrderHandleTask**:
    - Performs a final validation of order requests before sending them to the broker. This task ensures that all required request properties, populated during the pipeline process, are complete and contain valid data, guaranteeing accurate and reliable order execution.
 
 Each task can potentially use the Observer Design Pattern to handle multiple rules or strategies, although this is not implemented in the current version for simplicity.
-
 
 ## Extensibility
 
