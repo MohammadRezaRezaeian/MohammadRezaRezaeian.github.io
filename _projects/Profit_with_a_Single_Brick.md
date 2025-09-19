@@ -8,39 +8,34 @@ category: Python
 related_publications: true
 ---
 
-# Profit with a single brick: When Optimization goes Wide
-
 - **Figure 0:** Live Test on Demo from 2023-11-20 to 2025-09-18  
   ![Live Test on Demo](/assets/img/Profit_with_a_Single_Brick/LiveResult.gif)
 
 ## Table of Contents
 
-- [Profit with a single brick: When Optimization goes Wide](#profit-with-a-single-brick-when-optimization-goes-wide)
-  - [Table of Contents](#table-of-contents)
-  - [1. Abstract](#1-abstract)
-  - [2. Introduction](#2-introduction)
-    - [Project Goal](#project-goal)
-    - [The Challenge](#the-challenge)
-  - [3. Methodology for Optimization](#3-methodology-for-optimization)
-    - [Core Concept: "The Single Brick"](#core-concept-the-single-brick)
-    - [Optimization Space](#optimization-space)
-    - [Handling Categorical Parameters](#handling-categorical-parameters)
-    - [Choice of Optimization Algorithm](#choice-of-optimization-algorithm)
-    - [Performance Metrics](#performance-metrics)
-  - [4. Implementation](#4-implementation)
-    - [Strategy Backtesting Engine](#strategy-backtesting-engine)
-    - [Strategy Backtesting Engine](#strategy-backtesting-engine-1)
-    - [The Optimization Loop](#the-optimization-loop)
-  - [5. Results and Analysis](#5-results-and-analysis)
-    - [Optimization Process Analysis](#optimization-process-analysis)
-      - [Key Points from Parameter Analysis](#key-points-from-parameter-analysis)
-    - [Optimized Results Analysis](#optimized-results-analysis)
-    - [Final Strategy Outcome](#final-strategy-outcome)
-    - [Discussion of Findings](#discussion-of-findings)
-  - [6. Conclusion](#6-conclusion)
-
-7.  [References](#references)
-8.  [Appendix](#appendix) -->
+- [Table of Contents](#table-of-contents)
+- [1. Abstract](#1-abstract)
+- [2. Introduction](#2-introduction)
+  - [Project Goal](#project-goal)
+  - [The Challenge](#the-challenge)
+- [3. Methodology for Optimization](#3-methodology-for-optimization)
+  - [Core Concept: "The Single Brick"](#core-concept-the-single-brick)
+  - [Optimization Space](#optimization-space)
+  - [Handling Categorical Parameters](#handling-categorical-parameters)
+  - [Choice of Optimization Algorithm](#choice-of-optimization-algorithm)
+  - [Performance Metrics](#performance-metrics)
+- [4. Implementation](#4-implementation)
+  - [Strategy Backtesting Engine](#strategy-backtesting-engine)
+  - [Strategy Backtesting Engine](#strategy-backtesting-engine-1)
+  - [The Optimization Loop](#the-optimization-loop)
+- [5. Results and Analysis](#5-results-and-analysis)
+  - [Optimization Process Analysis](#optimization-process-analysis)
+    - [Key Points from Parameter Analysis](#key-points-from-parameter-analysis)
+  - [Optimized Results Analysis](#optimized-results-analysis)
+  - [Final Strategy Outcome](#final-strategy-outcome)
+  - [Discussion of Findings](#discussion-of-findings)
+- [6. Conclusion](#6-conclusion)
+- [7. License](#7-license)
 
 ---
 
@@ -309,3 +304,9 @@ We observed that every trading strategy has its own inherent weaknesses. While t
 The most effective approach is to implement hedging strategies that complement each other, covering one another’s weaknesses. In this context, portfolio management becomes more than just maintaining a basket of strategies; it evolves into the systematic orchestration of trading algorithms that interact and balance risk, ensuring more robust performance across different market scenarios.
 
 This insight emphasizes the importance of designing portfolios that are adaptive, resilient, and strategically diversified, rather than relying on individual strategies to perform perfectly.
+
+## 7. License
+
+<a name="7-license"></a>
+
+This project is licensed under the TradeYaar License - see the [LICENSE](LICENSE.md) file for details.
