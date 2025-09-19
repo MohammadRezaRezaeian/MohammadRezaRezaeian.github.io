@@ -2,7 +2,7 @@
 layout: page
 title: projects
 permalink: /projects/
-description: A growing collection of your cool projects.
+description: Let's dive into Failure...
 nav: true
 nav_order: 3
 display_categories: [Python, MQL]
