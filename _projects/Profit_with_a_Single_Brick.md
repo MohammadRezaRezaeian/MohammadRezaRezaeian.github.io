@@ -2,7 +2,7 @@
 layout: page
 title: Profit with a single brick, When Optimization goes Wide
 description: This project focuses on optimizing a trading strategy initially built in Pine Script. Manual backtests showed potential, but the vast parameter space—spanning multiple symbols, timeframes, and categorical variables—demanded a more systematic approach. Since standard backtesting tools were insufficient, we developed a custom Python framework capable of efficiently exploring this space and identifying robust, profitable configurations of the “single brick” strategy.
-img: assets/img/Profit_with_a_Single_Brick/optimization.svg
+img: assets/img/Profit_with_a_Single_Brick/optimization.jpg
 importance: 1
 category: Python
 related_publications: true
