@@ -309,4 +309,4 @@ This insight emphasizes the importance of designing portfolios that are adaptive
 
 <a name="7-license"></a>
 
-This project is licensed under the TradeYaar License - see the [LICENSE](/_projects/LICENSE.md) file for details.
+This project is licensed under the TradeYaar License - see the [LICENSE](/_projects/Profit_with_a_Single_Brick/LICENSE.md) file for details.
