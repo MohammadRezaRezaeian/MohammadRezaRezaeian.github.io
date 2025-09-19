@@ -67,4 +67,4 @@ The framework is designed with a strong emphasis on extensibility, prioritizing 
 
 ## License
 
-This project is licensed under the TradeYaar License - see the [LICENSE](LICENSE.md) file for details.
+This project is licensed under the TradeYaar License - see the [LICENSE](/_projects/LICENSE.md) file for details.
