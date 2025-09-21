@@ -25,6 +25,8 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
+      - name: Install Jupyter
+        run: pip install jupyter
       - name: Checkout
         uses: actions/checkout@v4
       - name: Setup Ruby
