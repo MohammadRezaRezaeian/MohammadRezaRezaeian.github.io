@@ -41,9 +41,9 @@ back_to_top: true # set to false to disable the back to top button
 repo_theme_light: default # https://github.com/anuraghazra/github-readme-stats/blob/master/themes/README.md
 repo_theme_dark: dark # https://github.com/anuraghazra/github-readme-stats/blob/master/themes/README.md
 repo_trophies:
-  enabled: true
-  theme_light: flat # https://github.com/ryo-ma/github-profile-trophy
-  theme_dark: gitdimmed # https://github.com/ryo-ma/github-profile-trophy
+  enabled: false
+  theme_light: flat # https://github.com/MohammadRezaRezaeian
+  theme_dark: gitdimmed # https://github.com/MohammadRezaRezaeian
 
 # -----------------------------------------------------------------------------
 # RSS Feed
@@ -97,8 +97,8 @@ bing_site_verification: # out your bing-site-verification ID (Bing Webmaster)
 # Blog
 # -----------------------------------------------------------------------------
 
-blog_name: Quantitive Analysis # blog_name will be displayed in your blog page
-blog_description: Some Handwriting Frome Expriences in Algorithmic Trading
+blog_name: Thinks and Walk!!! # blog_name will be displayed in your blog page
+blog_description: Is there anywhere the mind cannot explore? # blog_description will be displayed in your blog?
 permalink: /blog/:year/:title/
 lsi: false # produce an index for related posts
 
