@@ -1,4 +1,4 @@
-/*******************************************************************************
+﻿/*******************************************************************************
  * Styles for the base elements of the theme.
  ******************************************************************************/
 
@@ -541,6 +541,72 @@ footer.sticky-bottom {
 @media (min-width: 768px) {
   .repo {
     max-width: 50%;
+  }
+}
+.repo {
+  .repo-card {
+    border: 1px solid var(--global-divider-color);
+    border-radius: 1rem;
+    padding: 1.25rem;
+    min-height: 160px;
+    transition: transform 0.16s ease, box-shadow 0.16s ease;
+    background-color: var(--global-card-bg-color);
+    color: inherit;
+    text-decoration: none;
+
+    &:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 20px 45px rgba(0, 0, 0, 0.08);
+    }
+
+    .repo-card-heading {
+      gap: 1rem;
+    }
+
+    .repo-icon {
+      width: 3rem;
+      height: 3rem;
+      border-radius: 999px;
+      background-color: var(--global-divider-color);
+      color: var(--global-theme-color);
+      font-size: 1.2rem;
+      flex-shrink: 0;
+    }
+
+    .repo-header-text {
+      display: inline-block;
+      text-align: left;
+    }
+
+    .repo-title {
+      font-weight: 700;
+      font-size: 1rem;
+      color: var(--global-text-color);
+    }
+
+    .repo-owner {
+      color: var(--global-text-color-light);
+      font-size: 0.85rem;
+      margin-top: 0.25rem;
+    }
+
+    .repo-trophies {
+      margin-top: 1rem;
+    }
+
+    .repo-trophies img {
+      width: 100%;
+      height: auto;
+      display: block;
+      border-radius: 0.75rem;
+    }
+
+    .repo-description {
+      color: var(--global-text-color-light);
+      margin-bottom: 0;
+      font-size: 0.95rem;
+      line-height: 1.55;
+    }
   }
 }
 
@@ -1417,3 +1483,6 @@ figure.cover {
     color: #23212d !important;
   }
 }
+
+
+

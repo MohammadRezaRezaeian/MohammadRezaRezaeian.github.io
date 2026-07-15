@@ -1,0 +1,757 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quant Ecosystem Terminal | Unified Multi-Asset Analysis</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    
+    <style>
+        body {
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background-color: #0F172A; /* Slate 900 */
+            color: #F8FAFC; /* Slate 50 */
+            overflow-x: hidden;
+        }
+        .glass-panel {
+            background: rgba(30, 41, 59, 0.7); /* Slate 800 with opacity */
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(71, 85, 105, 0.5); /* Slate 600 */
+            border-radius: 1rem;
+        }
+        .tab-btn {
+            transition: all 0.3s ease;
+            border-left: 3px solid transparent;
+        }
+        .tab-btn.active {
+            background-color: rgba(51, 65, 85, 0.8); /* Slate 700 */
+            border-left: 3px solid #6366F1; /* Indigo 500 */
+            color: #818CF8; /* Indigo 400 */
+            font-weight: 600;
+        }
+        .tab-btn:hover:not(.active) {
+            background-color: rgba(51, 65, 85, 0.4);
+        }
+        .chart-container {
+            position: relative;
+            height: 400px;
+            width: 100%;
+        }
+        .content-section {
+            display: none;
+            animation: fadeIn 0.4s ease-in-out;
+        }
+        .content-section.active {
+            display: block;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #0F172A; }
+        ::-webkit-scrollbar-thumb { background: #334155; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #475569; }
+    </style>
+</head>
+<body class="h-screen flex flex-col md:flex-row">
+
+    <aside class="w-full md:w-80 h-auto md:h-screen bg-slate-900 border-r border-slate-800 flex flex-col flex-shrink-0 z-20 overflow-y-auto">
+        <div class="p-6 border-b border-slate-800 sticky top-0 bg-slate-900 z-10">
+            <h1 class="text-2xl font-bold text-indigo-400 flex items-center gap-3">
+                <i class="fa-solid fa-network-wired"></i> Quant Terminal
+            </h1>
+            <p class="text-slate-400 text-xs mt-2 uppercase tracking-wider">Multi-Asset Ecosystem</p>
+        </div>
+        
+        <div class="p-4 space-y-6">
+            <div>
+                <h3 class="text-xs font-bold text-slate-500 uppercase tracking-wider mb-2 px-4">I. Core Philosophy</h3>
+                <button onclick="switchTab('approach')" id="tab-approach" class="tab-btn w-full text-left px-4 py-2 rounded text-slate-300 text-sm active">
+                    <i class="fa-solid fa-sitemap w-5"></i> The Total Approach
+                </button>
+            </div>
+
+            <div>
+                <h3 class="text-xs font-bold text-slate-500 uppercase tracking-wider mb-2 px-4">II. Foundational Lenses</h3>
+                <button onclick="switchTab('L1')" id="tab-L1" class="tab-btn w-full text-left px-4 py-2 rounded text-slate-300 text-sm">
+                    <i class="fa-solid fa-link w-5"></i> 1. Pairwise Relations
+                </button>
+                <button onclick="switchTab('L2')" id="tab-L2" class="tab-btn w-full text-left px-4 py-2 rounded text-slate-300 text-sm">
+                    <i class="fa-solid fa-chart-pie w-5"></i> 2. Latent Factors
+                </button>
+                <button onclick="switchTab('L3')" id="tab-L3" class="tab-btn w-full text-left px-4 py-2 rounded text-slate-300 text-sm">
+                    <i class="fa-solid fa-project-diagram w-5"></i> 3. Network Topology
+                </button>
+                <button onclick="switchTab('L4')" id="tab-L4" class="tab-btn w-full text-left px-4 py-2 rounded text-slate-300 text-sm">
+                    <i class="fa-solid fa-water w-5"></i> 4. System Dynamics
+                </button>
+            </div>
+
+            <div>
+                <h3 class="text-xs font-bold text-slate-500 uppercase tracking-wider mb-2 px-4">III. Execution Strategies</h3>
+                <button onclick="switchTab('S1')" id="tab-S1" class="tab-btn w-full text-left px-4 py-2 rounded text-slate-300 text-sm">
+                    <i class="fa-solid fa-shield-halved w-5"></i> 1. True Diversification
+                </button>
+                <button onclick="switchTab('S2')" id="tab-S2" class="tab-btn w-full text-left px-4 py-2 rounded text-slate-300 text-sm">
+                    <i class="fa-solid fa-scale-balanced w-5"></i> 2. Statistical Arbitrage
+                </button>
+                <button onclick="switchTab('S3')" id="tab-S3" class="tab-btn w-full text-left px-4 py-2 rounded text-slate-300 text-sm">
+                    <i class="fa-solid fa-forward-step w-5"></i> 3. Lead-Lag Forecast
+                </button>
+                <button onclick="switchTab('S4')" id="tab-S4" class="tab-btn w-full text-left px-4 py-2 rounded text-slate-300 text-sm">
+                    <i class="fa-solid fa-biohazard w-5"></i> 4. Contagion Warning
+                </button>
+                <button onclick="switchTab('S5')" id="tab-S5" class="tab-btn w-full text-left px-4 py-2 rounded text-slate-300 text-sm">
+                    <i class="fa-solid fa-arrows-spin w-5"></i> 5. Capital Rotation
+                </button>
+                <button onclick="switchTab('S6')" id="tab-S6" class="tab-btn w-full text-left px-4 py-2 rounded text-slate-300 text-sm">
+                    <i class="fa-solid fa-microscope w-5"></i> 6. Regime Detection
+                </button>
+                <button onclick="switchTab('S7')" id="tab-S7" class="tab-btn w-full text-left px-4 py-2 rounded text-slate-300 text-sm">
+                    <i class="fa-solid fa-house-crack w-5"></i> 7. Systemic Fragility
+                </button>
+                <button onclick="switchTab('S8')" id="tab-S8" class="tab-btn w-full text-left px-4 py-2 rounded text-slate-300 text-sm">
+                    <i class="fa-solid fa-stopwatch w-5"></i> 8. Inefficiency Discovery
+                </button>
+            </div>
+        </div>
+    </aside>
+
+    <main class="flex-grow h-screen overflow-y-auto bg-slate-950 p-6 md:p-10 relative">
+        
+        <section id="content-approach" class="content-section active max-w-5xl mx-auto space-y-8">
+            <header>
+                <div class="text-indigo-400 font-semibold mb-2">Macro Architecture</div>
+                <h2 class="text-3xl md:text-4xl font-bold mb-4">The Total Approach: Systems vs. Time Series</h2>
+            </header>
+            
+            <div class="glass-panel p-8 text-slate-300 leading-relaxed space-y-6">
+                <p class="text-lg text-white font-medium">
+                    A fundamental error in quantitative analysis is treating an asset as a mere "time series"—a sequential list of past prices. A time series is just a one-dimensional shadow cast by a much larger, unseen object. The Total Approach fundamentally shifts the paradigm: we do not forecast isolated time series; we model the market as a massive, interconnected <strong>Dynamical System</strong>.
+                </p>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+                    <div class="bg-slate-900/50 p-6 rounded-lg border border-rose-900/50">
+                        <h4 class="text-rose-400 font-bold mb-3 flex items-center gap-2"><i class="fa-solid fa-chart-line"></i> The Time Series Fallacy</h4>
+                        <p class="text-sm">Traditional time series analysis assumes an asset's future can be predicted strictly from its own history. It relies heavily on localized lags and self-variance. Because it is completely blind to the underlying structural mechanics, a purely time-series-driven model fails catastrophically during regime shifts, black swans, or external liquidity shocks.</p>
+                    </div>
+                    <div class="bg-slate-900/50 p-6 rounded-lg border border-emerald-900/50">
+                        <h4 class="text-emerald-400 font-bold mb-3 flex items-center gap-2"><i class="fa-solid fa-network-wired"></i> The Systemic Paradigm</h4>
+                        <p class="text-sm">A system is a dynamic network of interconnected state variables. An asset is merely a single node reacting to structural forces, latent macroeconomic factors, and mathematical lead-lag relationships with other nodes. By analyzing the entire system's topology and state space, we execute based on the "engine's" mechanics, not just its exhaust.</p>
+                    </div>
+                </div>
+
+                <h3 class="text-xl font-bold text-white mt-8 mb-4 border-b border-slate-700 pb-2">The Mathematical Foundation</h3>
+                <p class="text-sm">
+                    This philosophical shift necessitates a profound change in the underlying mathematics. Instead of using localized autoregression to predict the next sequential step in a vacuum, a robust backend trading engine models the stationary relationships across the ecosystem:
+                </p>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 my-4">
+                    <div class="bg-slate-950 p-4 rounded text-center font-mono text-slate-500 border border-slate-800 shadow-inner flex flex-col justify-center">
+                        <span class="text-xs uppercase tracking-widest mb-2 opacity-50">Isolated Time Series</span>
+                        <span class="text-lg">$y_t = \alpha + \phi y_{t-1} + \epsilon_t$</span>
+                    </div>
+                    <div class="bg-slate-950 p-4 rounded text-center font-mono text-emerald-400 border border-emerald-900/30 shadow-inner flex flex-col justify-center">
+                        <span class="text-xs uppercase tracking-widest mb-2 opacity-50 text-emerald-200">System State-Space</span>
+                        <span class="text-lg">$Y_t = \beta X_t + \Gamma Z_t + \epsilon_t$</span>
+                    </div>
+                </div>
+                
+                <p class="text-sm">
+                    In the systemic equation, the vector $X_t$ represents latent principal components (macro forces) and $Z_t$ represents the mathematically detected market regime. The residual $\epsilon_t$ now represents a true structural arbitrage opportunity rather than unexplainable random noise. When processing asynchronous logic across thousands of portfolios simultaneously, relying on these systemic state variables is the only way to mathematically guarantee the architecture does not over-leverage on fragile, highly correlated anomalies.
+                </p>
+                
+                <div class="mt-8 bg-indigo-900/20 border-l-4 border-indigo-500 p-4 rounded text-sm">
+                    <strong>Dashboard Navigation:</strong> Use the sidebar to explore the theoretical math in the <strong>Foundational Lenses</strong> (Section II), and then interact with the live execution simulations in the <strong>Execution Strategies</strong> (Section III).
+                </div>
+            </div>
+        </section>
+
+
+        <section id="content-L1" class="content-section max-w-5xl mx-auto space-y-8">
+            <header>
+                <div class="text-slate-400 font-semibold mb-2">Theoretical Lens 01</div>
+                <h2 class="text-3xl md:text-4xl font-bold mb-4 text-white">Pairwise Relations: The "Leash" Effect</h2>
+                <div class="glass-panel p-6 text-slate-300 text-sm space-y-4">
+                    <p>While standard correlation measures short-term, directionless volatility mimicking, <strong>Cointegration</strong> represents a long-term, mean-reverting economic equilibrium. Imagine a person walking a dog on a leash; they may wander apart temporarily, but they are ultimately tethered together.</p>
+                </div>
+            </header>
+            <div class="glass-panel p-6">
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="text-xl font-bold text-slate-100">Cointegration Visualization</h3>
+                    <button onclick="startArbitrageSimL1()" id="btnSimL1" class="bg-indigo-600 hover:bg-indigo-500 text-white px-4 py-2 rounded text-sm">Animate Spread</button>
+                </div>
+                <div class="chart-container"><canvas id="chartL1"></canvas></div>
+            </div>
+        </section>
+
+        <section id="content-L2" class="content-section max-w-5xl mx-auto space-y-8">
+            <header>
+                <div class="text-slate-400 font-semibold mb-2">Theoretical Lens 02</div>
+                <h2 class="text-3xl md:text-4xl font-bold mb-4 text-white">Latent Factors: Core Drivers</h2>
+                <div class="glass-panel p-6 text-slate-300 text-sm space-y-4">
+                    <p><strong>Principal Component Analysis (PCA)</strong> allows us to isolate the "invisible forces" (such as macroeconomic shifts or interest rate decisions) that drive the broader market. This lens shatters the illusion of diversification.</p>
+                </div>
+            </header>
+            <div class="glass-panel p-6">
+                <h3 class="text-xl font-bold text-slate-100 mb-4 text-center">Total Market Variance Distribution</h3>
+                <div class="chart-container max-w-md mx-auto"><canvas id="chartL2"></canvas></div>
+                <p class="text-xs text-center text-slate-400 mt-4">More than 70% of equity portfolio movement is explained by the First Principal Component.</p>
+            </div>
+        </section>
+
+        <section id="content-L3" class="content-section max-w-5xl mx-auto space-y-8">
+            <header>
+                <div class="text-slate-400 font-semibold mb-2">Theoretical Lens 03</div>
+                <h2 class="text-3xl md:text-4xl font-bold mb-4 text-white">Topological Lens: Mapping Market Keystones</h2>
+                <div class="glass-panel p-6 text-slate-300 text-sm space-y-4">
+                    <p>Network theory enables us to map asset centralities. If a <strong>Keystone Asset</strong>—a highly central node with massive institutional interconnectedness—experiences a shock, the contagion spreads aggressively, threatening the ecosystem's structural integrity.</p>
+                </div>
+            </header>
+            <div class="glass-panel p-2 overflow-hidden bg-slate-900 border border-slate-700">
+                <div id="networkPlotL3" class="w-full" style="height: 500px;"></div>
+                <div class="p-4 bg-slate-800 border-t border-slate-700 flex justify-center gap-4 text-sm">
+                    <span class="flex items-center gap-1"><span class="w-3 h-3 rounded-full bg-rose-500"></span> Keystones</span>
+                    <span class="flex items-center gap-1"><span class="w-3 h-3 rounded-full bg-indigo-500"></span> Clusters</span>
+                    <span class="flex items-center gap-1"><span class="w-3 h-3 rounded-full bg-slate-400"></span> Peripherals</span>
+                </div>
+            </div>
+        </section>
+
+        <section id="content-L4" class="content-section max-w-5xl mx-auto space-y-8">
+            <header>
+                <div class="text-slate-400 font-semibold mb-2">Theoretical Lens 04</div>
+                <h2 class="text-3xl md:text-4xl font-bold mb-4 text-white">System Dynamics: Predicting Fragility</h2>
+                <div class="glass-panel p-6 text-slate-300 text-sm space-y-4">
+                    <p>When all assets suddenly begin moving "in lockstep," the system has become extremely fragile. The <strong>Absorption Ratio</strong> quantifies this fragility, serving as an early warning system before actual price drops materialize.</p>
+                </div>
+            </header>
+            <div class="glass-panel p-6">
+                <h3 class="text-xl font-bold text-slate-100 mb-4">Systemic Fragility vs. Index Returns</h3>
+                <div class="chart-container"><canvas id="chartL4"></canvas></div>
+            </div>
+        </section>
+
+
+        <section id="content-S1" class="content-section max-w-5xl mx-auto space-y-8">
+            <header>
+                <div class="text-indigo-400 font-semibold mb-2">Execution Insight 01</div>
+                <h2 class="text-3xl md:text-4xl font-bold mb-4 text-white">True Diversification via Orthogonal Factors</h2>
+                <div class="glass-panel p-6 text-slate-300 text-sm space-y-4">
+                    <p>Constructing a portfolio where weights are distributed across independent mathematical risk factors (PCA), not just different company names. This ensures survival during targeted macroeconomic shocks.</p>
+                </div>
+            </header>
+            <div class="glass-panel p-6">
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="text-xl font-bold text-slate-100">Sim: Naive vs. True Diversification</h3>
+                    <button onclick="runSimS1()" class="bg-indigo-600 hover:bg-indigo-500 text-white px-4 py-2 rounded text-sm">Inject Macro Shock <i class="fa-solid fa-bolt ml-2"></i></button>
+                </div>
+                <div class="chart-container"><canvas id="chartS1"></canvas></div>
+            </div>
+        </section>
+
+        <section id="content-S2" class="content-section max-w-5xl mx-auto space-y-8">
+            <header>
+                <div class="text-emerald-400 font-semibold mb-2">Execution Insight 02</div>
+                <h2 class="text-3xl md:text-4xl font-bold mb-4 text-white">Statistical Arbitrage Execution</h2>
+                <div class="glass-panel p-6 text-slate-300 text-sm space-y-4">
+                    <p>Monitoring the Z-score of the spread between cointegrated assets. If the Z-score exceeds thresholds, the automated engine shorts the overvalued asset and buys the undervalued one, profiting upon mean-reversion.</p>
+                </div>
+            </header>
+            <div class="glass-panel p-6">
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="text-xl font-bold text-slate-100">Live Trading Algorithm</h3>
+                    <div class="flex gap-4 items-center">
+                        <div class="text-sm bg-slate-800 px-3 py-1 rounded border border-slate-700">PnL: <span id="sim2-pnl" class="text-emerald-400 font-mono font-bold">$0</span></div>
+                        <button onclick="toggleSimS2()" id="btn-simS2" class="bg-emerald-600 hover:bg-emerald-500 text-white px-4 py-2 rounded text-sm">Start Algo</button>
+                    </div>
+                </div>
+                <div class="chart-container"><canvas id="chartS2"></canvas></div>
+            </div>
+        </section>
+
+        <section id="content-S3" class="content-section max-w-5xl mx-auto space-y-8">
+            <header>
+                <div class="text-amber-400 font-semibold mb-2">Execution Insight 03</div>
+                <h2 class="text-3xl md:text-4xl font-bold mb-4 text-white">Lead-Lag Information Flow</h2>
+                <div class="glass-panel p-6 text-slate-300 text-sm space-y-4">
+                    <p>Monitoring primary assets. If a major breakout occurs in a highly liquid market, immediately execute directional trades in secondary lagging markets before market makers update quotes.</p>
+                </div>
+            </header>
+            <div class="glass-panel p-6">
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="text-xl font-bold text-slate-100">Sim: Propagating Alpha</h3>
+                    <button onclick="runSimS3()" class="bg-amber-600 hover:bg-amber-500 text-white px-4 py-2 rounded text-sm">Simulate News Shock</button>
+                </div>
+                <div class="chart-container"><canvas id="chartS3"></canvas></div>
+            </div>
+        </section>
+
+        <section id="content-S4" class="content-section max-w-5xl mx-auto space-y-8">
+            <header>
+                <div class="text-rose-400 font-semibold mb-2">Execution Insight 04</div>
+                <h2 class="text-3xl md:text-4xl font-bold mb-4 text-white">Contagion Hedging Protocols</h2>
+                <div class="glass-panel p-6 text-slate-300 text-sm space-y-4">
+                    <p>Dynamically monitoring the volatility of the top 5% most central nodes to trigger portfolio-wide risk-off protocols days before a localized failure cascades into a systemic contagion.</p>
+                </div>
+            </header>
+            <div class="glass-panel p-6">
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="text-xl font-bold text-slate-100">Sim: Cascading Failures</h3>
+                    <div class="flex gap-2">
+                        <button onclick="triggerNodeS4('peripheral')" class="bg-slate-600 hover:bg-slate-500 text-white px-3 py-1 rounded text-xs">Shock Peripheral</button>
+                        <button onclick="triggerNodeS4('hub')" class="bg-rose-600 hover:bg-rose-500 text-white px-3 py-1 rounded text-xs">Shock Keystone</button>
+                        <button onclick="resetNetworkS4()" class="bg-indigo-600 hover:bg-indigo-500 text-white px-3 py-1 rounded text-xs">Reset Map</button>
+                    </div>
+                </div>
+                <div class="chart-container border border-slate-700 rounded bg-slate-900 overflow-hidden relative">
+                    <canvas id="networkCanvasS4" class="absolute top-0 left-0 w-full h-full"></canvas>
+                </div>
+            </div>
+        </section>
+
+        <section id="content-S5" class="content-section max-w-5xl mx-auto space-y-8">
+            <header>
+                <div class="text-blue-400 font-semibold mb-2">Execution Insight 05</div>
+                <h2 class="text-3xl md:text-4xl font-bold mb-4 text-white">Capital Rotation Tracking</h2>
+                <div class="glass-panel p-6 text-slate-300 text-sm space-y-4">
+                    <p>Using rolling volume-weighted correlations to track the net flow of liquidity between macro sectors, front-running the shift from growth to safe-haven assets.</p>
+                </div>
+            </header>
+            <div class="glass-panel p-6">
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="text-xl font-bold text-slate-100">Sim: Economic Phase Shifts</h3>
+                    <select id="cycleSelectorS5" onchange="runSimS5(this.value)" class="bg-slate-800 text-white border border-slate-600 rounded px-3 py-1 text-sm outline-none">
+                        <option value="growth">Bull Phase (Growth)</option>
+                        <option value="inflation">Stagflation (High CPI)</option>
+                        <option value="recession">Recession (Panic)</option>
+                    </select>
+                </div>
+                <div class="chart-container"><canvas id="chartS5"></canvas></div>
+            </div>
+        </section>
+
+        <section id="content-S6" class="content-section max-w-5xl mx-auto space-y-8">
+            <header>
+                <div class="text-purple-400 font-semibold mb-2">Execution Insight 06</div>
+                <h2 class="text-3xl md:text-4xl font-bold mb-4 text-white">Markov Regime Detection</h2>
+                <div class="glass-panel p-6 text-slate-300 text-sm space-y-4">
+                    <p>Employing Meta-strategies. When the scanner detects a transition to a "High Volatility" regime, the system automatically disables trend-following algorithms and activates mean-reversion engines.</p>
+                </div>
+            </header>
+            <div class="glass-panel p-6">
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="text-xl font-bold text-slate-100">Sim: Adaptive Algo Yield</h3>
+                    <button onclick="runSimS6()" class="bg-purple-600 hover:bg-purple-500 text-white px-4 py-2 rounded text-sm">Generate Market History</button>
+                </div>
+                <p class="text-xs text-slate-400 mb-4">Background colors denote the hidden market regime. Adaptive Algo switches logic during volatile chops (Red).</p>
+                <div class="chart-container"><canvas id="chartS6"></canvas></div>
+            </div>
+        </section>
+
+        <section id="content-S7" class="content-section max-w-5xl mx-auto space-y-8">
+            <header>
+                <div class="text-orange-400 font-semibold mb-2">Execution Insight 07</div>
+                <h2 class="text-3xl md:text-4xl font-bold mb-4 text-white">Systemic Fragility Gauge</h2>
+                <div class="glass-panel p-6 text-slate-300 text-sm space-y-4">
+                    <p>When the Absorption Ratio crosses historical bounds, systematic engines aggressively reduce gross exposure and acquire portfolio insurance weeks before the actual drawdown occurs.</p>
+                </div>
+            </header>
+            <div class="glass-panel p-6">
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="text-xl font-bold text-slate-100">Sim: The Crash Precursor</h3>
+                    <button onclick="runSimS7()" class="bg-orange-600 hover:bg-orange-500 text-white px-4 py-2 rounded text-sm">Simulate Drawdown</button>
+                </div>
+                <div class="chart-container"><canvas id="chartS7"></canvas></div>
+            </div>
+        </section>
+
+        <section id="content-S8" class="content-section max-w-5xl mx-auto space-y-8">
+            <header>
+                <div class="text-cyan-400 font-semibold mb-2">Execution Insight 08</div>
+                <h2 class="text-3xl md:text-4xl font-bold mb-4 text-white">Macro Inefficiency Discovery</h2>
+                <div class="glass-panel p-6 text-slate-300 text-sm space-y-4">
+                    <p>Event-driven statistical arbitrage. The millisecond new data arrives, algorithms short assets that are computationally "behind" in pricing the shock and hedge with assets that have already priced it in perfectly.</p>
+                </div>
+            </header>
+            <div class="glass-panel p-6">
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="text-xl font-bold text-slate-100">Sim: Shock Pricing Velocity</h3>
+                    <button onclick="runSimS8()" class="bg-cyan-600 hover:bg-cyan-500 text-white px-4 py-2 rounded text-sm">Release Surprise Data</button>
+                </div>
+                <div class="chart-container"><canvas id="chartS8"></canvas></div>
+            </div>
+        </section>
+
+    </main>
+
+    <script>
+        // Global Management
+        let activeInterval = null;
+        const charts = {};
+
+        // Chart.js global defaults for dark theme
+        Chart.defaults.color = '#94A3B8';
+        Chart.defaults.borderColor = 'rgba(71, 85, 105, 0.2)';
+        Chart.defaults.font.family = 'system-ui, -apple-system, sans-serif';
+
+        // Tab Switching Logic
+        function switchTab(tabId) {
+            if (activeInterval) {
+                clearInterval(activeInterval);
+                activeInterval = null;
+            }
+            if (networkAnimS4) cancelAnimationFrame(networkAnimS4);
+
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            document.getElementById(`tab-${tabId}`).classList.add('active');
+
+            document.querySelectorAll('.content-section').forEach(section => section.classList.remove('active'));
+            document.getElementById(`content-${tabId}`).classList.add('active');
+
+            // Initialize correct charts
+            setTimeout(() => {
+                switch(tabId) {
+                    case 'L1': initL1(); break;
+                    case 'L2': initL2(); break;
+                    case 'L3': initL3(); break;
+                    case 'L4': initL4(); break;
+                    case 'S1': resetSimS1(); break;
+                    case 'S2': resetSimS2(); break;
+                    case 'S3': resetSimS3(); break;
+                    case 'S4': resetNetworkS4(); break;
+                    case 'S5': runSimS5(document.getElementById('cycleSelectorS5').value); break;
+                    case 'S6': resetSimS6(); break;
+                    case 'S7': resetSimS7(); break;
+                    case 'S8': resetSimS8(); break;
+                }
+            }, 50);
+        }
+
+        function createChart(chartId, config) {
+            const ctx = document.getElementById(chartId).getContext('2d');
+            if (charts[chartId]) charts[chartId].destroy();
+            charts[chartId] = new Chart(ctx, config);
+            return charts[chartId];
+        }
+
+        // ==========================================
+        // LENS VISUALIZATIONS (L1 - L4)
+        // ==========================================
+        
+        let arbChartL1;
+        function initL1() {
+            const labels = Array.from({length: 40}, (_, i) => `Step ${i+1}`);
+            arbChartL1 = createChart('chartL1', {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [
+                        { label: 'Asset A', data: Array(40).fill(100), borderColor: '#818CF8', borderWidth: 2, pointRadius: 0, tension: 0.4 },
+                        { label: 'Asset B', data: Array(40).fill(100), borderColor: '#34D399', borderWidth: 2, pointRadius: 0, tension: 0.4 },
+                        { label: 'Spread', data: Array(40).fill(0), borderColor: '#FB7185', borderDash: [5,5], borderWidth: 1, pointRadius: 0, fill: false, yAxisID: 'y1' }
+                    ]
+                },
+                options: { responsive: true, maintainAspectRatio: false, animation: { duration: 0 }, scales: { y: { position: 'left' }, y1: { position: 'right', min: -15, max: 15, display: false } } }
+            });
+            document.getElementById('btnSimL1').disabled = false;
+            document.getElementById('btnSimL1').innerText = 'Animate Spread';
+        }
+
+        function startArbitrageSimL1() {
+            if(activeInterval) clearInterval(activeInterval);
+            let step = 40; let base = 100;
+            const btn = document.getElementById('btnSimL1');
+            btn.disabled = true; btn.innerText = 'Simulating...';
+
+            activeInterval = setInterval(() => {
+                base += (Math.random() - 0.5) * 3;
+                let spread = (step > 60 && step < 85) ? 12 * Math.sin((step-60)/8) : (Math.random()-0.5)*2;
+                
+                const d = arbChartL1.data;
+                d.labels.push(`Step ${step}`);
+                d.datasets[0].data.push(base + spread);
+                d.datasets[1].data.push(base - spread);
+                d.datasets[2].data.push(spread * 2);
+
+                if(d.labels.length > 50) { d.labels.shift(); d.datasets.forEach(ds => ds.data.shift()); }
+                arbChartL1.update();
+                step++;
+                if(step > 150) { clearInterval(activeInterval); btn.disabled = false; btn.innerText = 'Run Again'; }
+            }, 80);
+        }
+
+        function initL2() {
+            createChart('chartL2', {
+                type: 'doughnut',
+                data: {
+                    labels: ['Comp 1 (Macro)', 'Comp 2 (Sector)', 'Noise'],
+                    datasets: [{ data: [72, 18, 10], backgroundColor: ['#6366F1', '#10B981', '#475569'], borderWidth: 0 }]
+                },
+                options: { responsive: true, maintainAspectRatio: false, cutout: '70%', plugins: { legend: { position: 'bottom', labels: {color: '#CBD5E1'} } } }
+            });
+        }
+
+        function initL3() {
+            const x=[], y=[], z=[], colors=[], sizes=[];
+            for (let i=0; i<180; i++) {
+                if (i<6) { x.push((Math.random()-0.5)*3); y.push((Math.random()-0.5)*3); z.push((Math.random()-0.5)*3); colors.push('#F43F5E'); sizes.push(18); } 
+                else if (i<50) { const h=i%6; x.push(x[h]+(Math.random()-0.5)*6); y.push(y[h]+(Math.random()-0.5)*6); z.push(z[h]+(Math.random()-0.5)*6); colors.push('#6366F1'); sizes.push(10); } 
+                else { x.push((Math.random()-0.5)*25); y.push((Math.random()-0.5)*25); z.push((Math.random()-0.5)*25); colors.push('#94A3B8'); sizes.push(5); }
+            }
+            Plotly.newPlot('networkPlotL3', [{x:x,y:y,z:z, mode:'markers', type:'scatter3d', marker:{size:sizes, color:colors, opacity:0.8}, hoverinfo:'none'}], 
+                {margin:{l:0,r:0,b:0,t:0}, paper_bgcolor:'rgba(0,0,0,0)', scene:{xaxis:{visible:false}, yaxis:{visible:false}, zaxis:{visible:false}, camera:{eye:{x:1.5, y:1.5, z:1.2}}}}, {displayModeBar: false});
+        }
+
+        function initL4() {
+            const data = Array.from({length: 50}, (_, i) => {
+                let p = 100+i+Math.random()*5; let s = 0.5+Math.random()*0.1;
+                if(i>35 && i<42) { p-=(i-35)*8; s+=0.35; } return {p, s};
+            });
+            createChart('chartL4', {
+                type: 'line',
+                data: {
+                    labels: data.map((_, i) => i),
+                    datasets: [
+                        { label: 'Market Index', data: data.map(d=>d.p), borderColor: '#6366F1', fill: false, pointRadius: 0, yAxisID: 'y' },
+                        { label: 'Absorption (Sync)', data: data.map(d=>d.s), borderColor: '#F59E0B', backgroundColor: 'rgba(245, 158, 11, 0.2)', fill: true, pointRadius: 0, yAxisID: 'y1', tension: 0.4 }
+                    ]
+                },
+                options: { responsive: true, maintainAspectRatio: false, scales: { y: { position: 'left' }, y1: { position: 'right', min: 0.3, max: 1, grid: { drawOnChartArea: false } } } }
+            });
+        }
+
+        // ==========================================
+        // STRATEGY SIMULATIONS (S1 - S8)
+        // ==========================================
+
+        let simS1Data = { A: [], B: [], labels: [] };
+        function resetSimS1() {
+            simS1Data = { A: [100], B: [100], labels: [0] };
+            for(let i=1; i<=60; i++) {
+                simS1Data.labels.push(i);
+                simS1Data.A.push(simS1Data.A[i-1] * (1 + (Math.random()-0.48)*0.02));
+                simS1Data.B.push(simS1Data.B[i-1] * (1 + (Math.random()-0.48)*0.015));
+            }
+            createChart('chartS1', {
+                type: 'line',
+                data: { labels: simS1Data.labels, datasets: [ { label: 'Naive Portfolio', data: simS1Data.A, borderColor: '#F43F5E', tension: 0.3, pointRadius: 0 }, { label: 'PCA Orthogonal Portfolio', data: simS1Data.B, borderColor: '#10B981', tension: 0.3, pointRadius: 0 } ] },
+                options: { responsive: true, maintainAspectRatio: false, animation: {duration: 400} }
+            });
+        }
+        function runSimS1() {
+            for(let i=30; i<=60; i++) {
+                simS1Data.A[i] = simS1Data.A[i-1] * (1 + (i === 30 ? -0.15 : (Math.random()-0.55)*0.03));
+                simS1Data.B[i] = simS1Data.B[i-1] * (1 + (i === 30 ? -0.02 : (Math.random()-0.48)*0.015));
+            }
+            charts['chartS1'].update();
+        }
+
+        let simS2State = { running: false, step: 0, spread: [], labels: [], pnl: 0, position: 0 };
+        function resetSimS2() {
+            if(activeInterval) clearInterval(activeInterval);
+            simS2State = { running: false, step: 0, spread: Array(50).fill(0), labels: Array.from({length:50},(_,i)=>i), pnl: 0, position: 0 };
+            document.getElementById('sim2-pnl').innerText = '$0'; document.getElementById('sim2-pnl').className = 'text-emerald-400 font-mono font-bold';
+            document.getElementById('btn-simS2').innerText = 'Start Algo'; document.getElementById('btn-simS2').className = 'bg-emerald-600 hover:bg-emerald-500 text-white px-4 py-2 rounded text-sm';
+            
+            createChart('chartS2', {
+                type: 'line',
+                data: {
+                    labels: simS2State.labels,
+                    datasets: [
+                        { label: 'Z-Score', data: simS2State.spread, borderColor: '#38BDF8', tension: 0.2, pointRadius: 0, fill: {target: 'origin', above: 'rgba(56, 189, 248, 0.1)', below: 'rgba(56, 189, 248, 0.1)'} },
+                        { label: '+2.0 Threshold', data: Array(50).fill(2), borderColor: '#F43F5E', borderDash: [5,5], borderWidth: 1, pointRadius: 0, fill: false },
+                        { label: '-2.0 Threshold', data: Array(50).fill(-2), borderColor: '#10B981', borderDash: [5,5], borderWidth: 1, pointRadius: 0, fill: false }
+                    ]
+                },
+                options: { responsive: true, maintainAspectRatio: false, animation: false, scales: { y: { min: -4, max: 4 } } }
+            });
+        }
+        function toggleSimS2() {
+            const btn = document.getElementById('btn-simS2');
+            if(simS2State.running) {
+                clearInterval(activeInterval); simS2State.running = false; btn.innerText = 'Resume Algo'; btn.className = 'bg-emerald-600 hover:bg-emerald-500 text-white px-4 py-2 rounded text-sm';
+            } else {
+                simS2State.running = true; btn.innerText = 'Stop Algo'; btn.className = 'bg-rose-600 hover:bg-rose-500 text-white px-4 py-2 rounded text-sm';
+                activeInterval = setInterval(() => {
+                    simS2State.step++;
+                    let lastVal = simS2State.spread[simS2State.spread.length-1];
+                    let newVal = lastVal - (lastVal * 0.05) + ((Math.random()-0.5) * 1.2);
+                    simS2State.spread.shift(); simS2State.spread.push(newVal);
+                    simS2State.labels.shift(); simS2State.labels.push(simS2State.step + 50);
+
+                    if(simS2State.position === 0) {
+                        if(newVal > 2) simS2State.position = -1; if(newVal < -2) simS2State.position = 1;
+                    } else if (simS2State.position === -1) {
+                        if(newVal < 0) { simS2State.pnl += 500; simS2State.position = 0; } else { simS2State.pnl -= 20; }
+                    } else if (simS2State.position === 1) {
+                        if(newVal > 0) { simS2State.pnl += 500; simS2State.position = 0; } else { simS2State.pnl -= 20; }
+                    }
+                    
+                    document.getElementById('sim2-pnl').innerText = '$' + simS2State.pnl.toLocaleString();
+                    document.getElementById('sim2-pnl').className = `font-mono font-bold ${simS2State.pnl >= 0 ? 'text-emerald-400' : 'text-rose-400'}`;
+                    charts['chartS2'].update();
+                }, 100);
+            }
+        }
+
+        let simS3Data = { lead: [], lag: [], labels: [] };
+        function resetSimS3() {
+            simS3Data = { lead: [100], lag: [50], labels: [0] };
+            for(let i=1; i<=80; i++) {
+                simS3Data.labels.push(i);
+                simS3Data.lead.push(simS3Data.lead[i-1] * (1 + (Math.random()-0.5)*0.01));
+                simS3Data.lag.push((i > 5) ? simS3Data.lead[i-5] * 0.5 * (1 + (Math.random()-0.5)*0.005) : simS3Data.lag[i-1] * (1 + (Math.random()-0.5)*0.01));
+            }
+            createChart('chartS3', {
+                type: 'line',
+                data: { labels: simS3Data.labels, datasets: [ { label: 'Primary (Lead)', data: simS3Data.lead, borderColor: '#F59E0B', tension: 0.2, pointRadius: 0, yAxisID: 'y' }, { label: 'Secondary (Lag)', data: simS3Data.lag, borderColor: '#A78BFA', borderDash:[5,5], tension: 0.2, pointRadius: 0, yAxisID: 'y1' } ] },
+                options: { responsive: true, maintainAspectRatio: false, scales: { y: { position: 'left' }, y1: { position: 'right', grid: { drawOnChartArea: false } } } }
+            });
+        }
+        function runSimS3() {
+            for(let i=40; i<=80; i++) {
+                if(i === 40) simS3Data.lead[i] *= 1.08; else simS3Data.lead[i] = simS3Data.lead[i-1] * (1 + (Math.random()-0.5)*0.01);
+                if(i < 45) simS3Data.lag[i] = simS3Data.lag[i-1] * (1 + (Math.random()-0.5)*0.01);
+                else if (i >= 45 && i <= 50) simS3Data.lag[i] = simS3Data.lag[i-1] * 1.015;
+                else simS3Data.lag[i] = simS3Data.lead[i-5] * 0.5 * (1 + (Math.random()-0.5)*0.005);
+            }
+            charts['chartS3'].update();
+        }
+
+        let networkNodesS4 = [], networkEdgesS4 = [], networkCanvasS4, ctxNetS4, networkAnimS4;
+        function resetNetworkS4() {
+            networkCanvasS4 = document.getElementById('networkCanvasS4');
+            ctxNetS4 = networkCanvasS4.getContext('2d');
+            cancelAnimationFrame(networkAnimS4);
+            
+            networkNodesS4 = []; networkEdgesS4 = [];
+            const w = networkCanvasS4.parentElement.clientWidth; const h = networkCanvasS4.parentElement.clientHeight;
+            
+            for(let i=0; i<3; i++) networkNodesS4.push({ id: i, x: w*0.3 + i*w*0.2, y: h/2 + (Math.random()-0.5)*h*0.4, type: 'hub', state: 'normal', radius: 12 });
+            for(let i=3; i<63; i++) {
+                let hubId = i % 3; let hx = networkNodesS4[hubId].x; let hy = networkNodesS4[hubId].y;
+                let angle = Math.random() * Math.PI * 2; let dist = 30 + Math.random() * 120;
+                networkNodesS4.push({ id: i, x: hx + Math.cos(angle)*dist, y: hy + Math.sin(angle)*dist, type: 'peripheral', state: 'normal', radius: 4, hubTarget: hubId });
+            }
+            networkEdgesS4.push({source: 0, target: 1}); networkEdgesS4.push({source: 1, target: 2}); networkEdgesS4.push({source: 0, target: 2});
+            for(let i=3; i<63; i++) {
+                networkEdgesS4.push({ source: networkNodesS4[i].hubTarget, target: i });
+                if(Math.random() > 0.8) networkEdgesS4.push({ source: i, target: 3 + Math.floor(Math.random()*60) });
+            }
+            drawNetworkS4();
+        }
+        function drawNetworkS4() {
+            networkCanvasS4.width = networkCanvasS4.parentElement.clientWidth; networkCanvasS4.height = networkCanvasS4.parentElement.clientHeight;
+            ctxNetS4.clearRect(0, 0, networkCanvasS4.width, networkCanvasS4.height);
+            networkEdgesS4.forEach(e => {
+                let n1 = networkNodesS4[e.source]; let n2 = networkNodesS4[e.target];
+                ctxNetS4.beginPath(); ctxNetS4.moveTo(n1.x, n1.y); ctxNetS4.lineTo(n2.x, n2.y);
+                ctxNetS4.strokeStyle = (n1.state === 'failed' || n2.state === 'failed') ? 'rgba(244, 63, 94, 0.4)' : 'rgba(71, 85, 105, 0.3)';
+                ctxNetS4.lineWidth = (n1.type==='hub' && n2.type==='hub') ? 2 : 1; ctxNetS4.stroke();
+            });
+            networkNodesS4.forEach(n => {
+                ctxNetS4.beginPath(); ctxNetS4.arc(n.x, n.y, n.radius, 0, Math.PI*2);
+                if (n.state === 'failed') ctxNetS4.fillStyle = '#F43F5E'; else if (n.type === 'hub') ctxNetS4.fillStyle = '#6366F1'; else ctxNetS4.fillStyle = '#94A3B8';
+                ctxNetS4.fill();
+            });
+        }
+        function animateNetworkS4() {
+            let spreading = false;
+            networkNodesS4.forEach(n => {
+                if (n.state === 'failed' && Math.random() > 0.85) {
+                    networkEdgesS4.forEach(e => {
+                        if (e.source === n.id && networkNodesS4[e.target].state !== 'failed') { networkNodesS4[e.target].state = 'failed'; spreading = true; }
+                        if (e.target === n.id && networkNodesS4[e.source].state !== 'failed') { networkNodesS4[e.source].state = 'failed'; spreading = true; }
+                    });
+                }
+            });
+            drawNetworkS4();
+            if(spreading) networkAnimS4 = requestAnimationFrame(animateNetworkS4);
+        }
+        function triggerNodeS4(type) {
+            cancelAnimationFrame(networkAnimS4);
+            let target = networkNodesS4.find(n => n.type === type && n.state === 'normal');
+            if (target) { target.state = 'failed'; animateNetworkS4(); }
+        }
+
+        function runSimS5(phase) {
+            let allocations = phase === 'growth' ? [60, 10, 15, 15] : phase === 'inflation' ? [15, 45, 10, 30] : [10, 20, 50, 20];
+            createChart('chartS5', {
+                type: 'doughnut',
+                data: { labels: ['Tech/Growth', 'Gold/Commodities', 'Bonds', 'Defensive'], datasets: [{ data: allocations, backgroundColor: ['#3B82F6', '#F59E0B', '#10B981', '#8B5CF6'], borderWidth: 0 }] },
+                options: { responsive: true, maintainAspectRatio: false, cutout: '65%', plugins: { legend: { position: 'right', labels: {color: '#CBD5E1'} } } }
+            });
+        }
+
+        function resetSimS6() {
+            let labels = [], prices = [], regimes = [], pnlStatic = [100], pnlAdaptive = [100];
+            let price = 100, isVolatile = false;
+            for(let i=0; i<100; i++) {
+                labels.push(i); if (i % 25 === 0) isVolatile = !isVolatile; regimes.push(isVolatile ? 'red' : 'green');
+                price *= (!isVolatile) ? (1 + 0.005 + (Math.random()-0.5)*0.015) : (1 + (Math.random()-0.5)*0.06); prices.push(price);
+                if(i > 0) {
+                    let rS = (prices[i] - prices[i-1]) / prices[i-1];
+                    pnlStatic.push(pnlStatic[i-1] * (1 + (isVolatile ? rS - 0.02 : rS * 1.5)));
+                    pnlAdaptive.push(pnlAdaptive[i-1] * (1 + (isVolatile ? Math.abs(rS)*0.5 : rS * 1.5)));
+                }
+            }
+            createChart('chartS6', {
+                type: 'line',
+                data: { labels: labels, datasets: [ { label: 'Static Trend Logic', data: pnlStatic, borderColor: '#64748B', borderDash:[5,5], tension: 0.1, pointRadius: 0 }, { label: 'Adaptive HMM Logic', data: pnlAdaptive, borderColor: '#A855F7', tension: 0.1, pointRadius: 0 } ] },
+                options: { 
+                    responsive: true, maintainAspectRatio: false,
+                    plugins: { annotation: { annotations: regimes.map((c, i) => ({ type: 'box', xMin: i, xMax: i+1, yMin: 0, yMax: 300, backgroundColor: c === 'red' ? 'rgba(244, 63, 94, 0.05)' : 'rgba(16, 185, 129, 0.05)', borderWidth: 0 })) } }
+                }
+            });
+        }
+
+        function resetSimS7() {
+            let idx = Array(60).fill(100), abs = Array(60).fill(0.4);
+            for(let i=1; i<60; i++) { idx[i] = idx[i-1] * (1 + (Math.random()-0.48)*0.02); abs[i] = 0.4 + Math.random()*0.1; }
+            createChart('chartS7', {
+                type: 'line',
+                data: { labels: Array.from({length:60},(_,i)=>i), datasets: [ { label: 'Market Index', data: idx, borderColor: '#3B82F6', tension: 0.3, pointRadius: 0, yAxisID: 'y' }, { label: 'Absorption (Fragility)', data: abs, borderColor: '#F97316', backgroundColor: 'rgba(249, 115, 22, 0.1)', fill: true, tension: 0.3, pointRadius: 0, yAxisID: 'y1' } ] },
+                options: { responsive: true, maintainAspectRatio: false, animation: {duration:0}, scales: { y: { position: 'left' }, y1: { position: 'right', min: 0.2, max: 1.0, grid: { drawOnChartArea: false } } } }
+            });
+        }
+        function runSimS7() {
+            let ch = charts['chartS7']; let idx = ch.data.datasets[0].data; let abs = ch.data.datasets[1].data;
+            for(let i=35; i<=45; i++) { idx[i] = idx[i-1] * (1 + (Math.random()-0.4)*0.02); abs[i] = 0.6 + ((i-35)*0.03) + Math.random()*0.05; }
+            for(let i=46; i<60; i++) { idx[i] = idx[i-1] * (1 - 0.05 - Math.random()*0.05); abs[i] = abs[45] - ((i-46)*0.02); }
+            ch.update();
+        }
+
+        function resetSimS8() {
+            let eff = Array(50).fill(100), ineff = Array(50).fill(100);
+            for(let i=1; i<50; i++) { eff[i] = eff[i-1] + (Math.random()-0.5)*0.2; ineff[i] = ineff[i-1] + (Math.random()-0.5)*0.2; }
+            createChart('chartS8', {
+                type: 'line',
+                data: { labels: Array.from({length:50},(_,i)=>i), datasets: [ { label: 'Efficient Market', data: eff, borderColor: '#06B6D4', stepLine: false, pointRadius: 0 }, { label: 'Inefficient Market', data: ineff, borderColor: '#F472B6', tension: 0.2, pointRadius: 0 } ] },
+                options: { responsive: true, maintainAspectRatio: false }
+            });
+        }
+        function runSimS8() {
+            let ch = charts['chartS8']; let eff = ch.data.datasets[0].data; let ineff = ch.data.datasets[1].data;
+            for(let i=20; i<50; i++) {
+                if(i===20) eff[i] = 105; else eff[i] = eff[i-1] + (Math.random()-0.5)*0.2;
+                if(i < 35) ineff[i] = ineff[i-1] + 0.33 + (Math.random()-0.5)*0.5; else ineff[i] = eff[i] + (Math.random()-0.5)*0.5;
+            }
+            ch.update();
+        }
+
+        // Init Annotation Plugin & Start
+        window.onload = () => {
+            const script = document.createElement('script');
+            script.src = 'https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation@2.1.0/dist/chartjs-plugin-annotation.min.js';
+            script.onload = () => switchTab('approach'); // Default to The Total Approach
+            document.head.appendChild(script);
+        };
+    </script>
+</body>
+</html>

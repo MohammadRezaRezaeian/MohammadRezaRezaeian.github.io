@@ -20,13 +20,16 @@ nav_order: 4
 ---
 
 {% if site.repo_trophies.enabled %}
+
+## GitHub trophies
+
 {% for user in site.data.repositories.github_users %}
 {% if site.data.repositories.github_users.size > 1 %}
 
   <h4>{{ user }}</h4>
-  {% endif %}
+{% endif %}
   <div class="repositories d-flex flex-wrap flex-md-row flex-column justify-content-between align-items-center">
-  {% include repository/repo_trophies.liquid username=user %}
+    {% include repository/repo_trophies.liquid username=user %}
   </div>
 
 ---

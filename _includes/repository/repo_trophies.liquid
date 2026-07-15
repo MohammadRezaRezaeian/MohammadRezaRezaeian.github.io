@@ -1,42 +1,31 @@
-<div class="repo p-2 text-center">
-  <a href="https://github.com/MohammadRezaRezaeian">
-    <span class="d-none d-sm-none d-md-block">
-      <img
-        class="only-light"
-        alt="{{ include.username }}"
-        src="https://github-profile-trophy.vercel.app/?username={{ include.username }}&theme={{ site.repo_trophies.theme_light }}&locale={{ site.lang }}&margin-w=15&margin-h=15&no-bg=true&rank=-C&column=6"
-      >
-      <img
-        class="only-dark"
-        alt="{{ include.username }}"
-        src="https://github-profile-trophy.vercel.app/?username={{ include.username }}&theme={{ site.repo_trophies.theme_dark }}&locale={{ site.lang }}&margin-w=15&margin-h=15&no-bg=true&rank=-C&column=6"
-      >
-    </span>
+﻿<div class="repo p-2">
+  <a class="repo-card d-block text-decoration-none" href="https://github.com/{{ include.username }}" rel="external nofollow noopener" target="_blank">
+    <div class="repo-card-heading d-flex align-items-center mb-3">
+      <span class="repo-icon d-flex align-items-center justify-content-center">
+        <i class="fas fa-trophy" aria-hidden="true"></i>
+      </span>
+      <div class="repo-header-text text-left">
+        <div class="repo-title">GitHub trophies</div>
+        <div class="repo-owner">Achievements and profile honors</div>
+      </div>
+    </div>
 
-    <span class="d-none d-sm-block d-md-none">
-      <img
-        class="only-light"
-        alt="{{ include.username }}"
-        src="https://github-profile-trophy.vercel.app/?username={{ include.username }}&theme={{ site.repo_trophies.theme_light }}&locale={{ site.lang }}&margin-w=15&margin-h=15&no-bg=true&rank=-C&column=4"
-      >
-      <img
-        class="only-dark"
-        alt="{{ include.username }}"
-        src="https://github-profile-trophy.vercel.app/?username={{ include.username }}&theme={{ site.repo_trophies.theme_dark }}&locale={{ site.lang }}&margin-w=15&margin-h=15&no-bg=true&rank=-C&column=4"
-      >
-    </span>
+    <div class="repo-trophies">
+      <span class="d-none d-sm-none d-md-block">
+        <img class="only-light w-100" alt="{{ include.username }}" src="https://github-profile-trophy.vercel.app/?username={{ include.username }}&theme={{ site.repo_trophies.theme_light }}&locale={{ site.lang }}&margin-w=15&margin-h=15&no-bg=true&rank=-C&column=6">
+        <img class="only-dark w-100" alt="{{ include.username }}" src="https://github-profile-trophy.vercel.app/?username={{ include.username }}&theme={{ site.repo_trophies.theme_dark }}&locale={{ site.lang }}&margin-w=15&margin-h=15&no-bg=true&rank=-C&column=6">
+      </span>
 
-    <span class="d-block d-sm-none">
-      <img
-        class="only-light"
-        alt="{{ include.username }}"
-        src="https://github-profile-trophy.vercel.app/?username={{ include.username }}&theme={{ site.repo_trophies.theme_light }}&locale={{ site.lang }}&margin-w=15&margin-h=15&no-bg=true&rank=-C&column=3"
-      >
-      <img
-        class="only-dark"
-        alt="{{ include.username }}"
-        src="https://github-profile-trophy.vercel.app/?username={{ include.username }}&theme={{ site.repo_trophies.theme_dark }}&locale={{ site.lang }}&margin-w=15&margin-h=15&no-bg=true&rank=-C&column=3"
-      >
-    </span>
+      <span class="d-none d-sm-block d-md-none">
+        <img class="only-light w-100" alt="{{ include.username }}" src="https://github-profile-trophy.vercel.app/?username={{ include.username }}&theme={{ site.repo_trophies.theme_light }}&locale={{ site.lang }}&margin-w=15&margin-h=15&no-bg=true&rank=-C&column=4">
+        <img class="only-dark w-100" alt="{{ include.username }}" src="https://github-profile-trophy.vercel.app/?username={{ include.username }}&theme={{ site.repo_trophies.theme_dark }}&locale={{ site.lang }}&margin-w=15&margin-h=15&no-bg=true&rank=-C&column=4">
+      </span>
+
+      <span class="d-block d-sm-none">
+        <img class="only-light w-100" alt="{{ include.username }}" src="https://github-profile-trophy.vercel.app/?username={{ include.username }}&theme={{ site.repo_trophies.theme_light }}&locale={{ site.lang }}&margin-w=15&margin-h=15&no-bg=true&rank=-C&column=3">
+        <img class="only-dark w-100" alt="{{ include.username }}" src="https://github-profile-trophy.vercel.app/?username={{ include.username }}&theme={{ site.repo_trophies.theme_dark }}&locale={{ site.lang }}&margin-w=15&margin-h=15&no-bg=true&rank=-C&column=3">
+      </span>
+    </div>
   </a>
 </div>
+

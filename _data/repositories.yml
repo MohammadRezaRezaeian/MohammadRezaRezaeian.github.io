@@ -1,8 +1,18 @@
-github_users:
+﻿github_users:
   - MohammadRezaRezaeian
 
-repo_description_lines_max: 2
+repo_description_lines_max: 5
 
 github_repos:
-  - MohammadRezaRezaeian/TradingGuard_mql5
-  - MohammadRezaRezaeian/PositionManager_mql5
+  - name: MohammadRezaRezaeian/TradingGuard_mql5
+    description: "TradingGuard MQL5 repository with advanced position management features."
+  - name: MohammadRezaRezaeian/PositionManager_mql5
+    description: "PositionManager MQL5 repository for dynamic sizing and smart trade exit control."
+  - name: MohammadRezaRezaeian/Guard-Service_MQL5
+    description: "Guard-Service MQL5 repository providing monitoring and auto-protection utilities for trading systems."
+  - name: MohammadRezaRezaeian/PositionSizeCalculator_MQL5
+    description: "PositionSizeCalculator MQL5 repository for accurate trade sizing and risk-aware execution."
+  - name: MohammadRezaRezaeian/DDS_model
+    description: "DDS_model repository for data-driven strategy development and portfolio optimization."
+  - name: MohammadRezaRezaeian/PineHook
+    description: "Automatically parses incoming Trading View alerts and executes the corresponding trades instantly in your MetaTrader 5 account"

@@ -5,8 +5,8 @@ permalink: /projects/
 description: Let's dive into Failure...
 nav: true
 nav_order: 3
-display_categories: [Python, MQL]
-horizontal: false
+display_categories: [Quant Analysis, Python, MQL]
+horizontal: true
 ---
 
 <!-- pages/projects.md -->

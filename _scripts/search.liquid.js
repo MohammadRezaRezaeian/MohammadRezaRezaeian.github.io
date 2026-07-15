@@ -4,8 +4,9 @@ permalink: /assets/js/search-data.js
 // get the ninja-keys element
 const ninja = document.querySelector('ninja-keys');
 
-// add the home and posts menu items
-ninja.data = [
+// add the home and posts menu items (only if the element exists)
+if (ninja) {
+  ninja.data = [
   {%- for page in site.pages -%}
     {%- if page.permalink == '/' -%}{%- assign about_title = page.title | strip -%}{%- endif -%}
   {%- endfor -%}
@@ -326,4 +327,5 @@ ninja.data = [
       },
     },
   {%- endif -%}
-];
+  ];
+}
