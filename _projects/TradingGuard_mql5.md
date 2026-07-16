@@ -1,7 +1,7 @@
 ---
 layout: page
 title: TradeFilters Framework for MQL5
-description: Most Expert Advisors focus solely on signal generation, leaving critical safety, risk management, and market quality checks scattered throughout the code or entirely absent. This creates fragile systems prone to catastrophic mistakes during adverse market conditions. The TradeFilters Framework addresses this by providing a modular, filter-driven validation layer that sits between your strategy and the broker, ensuring trades are only executed when account safety, market quality, timing, price location, and technical conditions all align. This framework separates trading logic from trading safety, making risk rules reusable across multiple strategies while keeping EA code clean and focused on signal generation.
+description: A Filtering Protective Layer between EAs and Broker
 img: assets/img/TradingGuard_Anubis.jpg
 importance: 2
 category: MQL

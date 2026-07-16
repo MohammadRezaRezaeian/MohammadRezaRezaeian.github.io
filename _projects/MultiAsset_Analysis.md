@@ -1,7 +1,7 @@
 ---
 layout: page
 title: MultiAsset Analysis
-description: Interactive multi-asset analysis dashboard
+description: Treating Stock Markets as a Multi-Asset System
 img: assets/img/Correlation_Graph.jpg
 importance: 1
 category: Quant Analysis

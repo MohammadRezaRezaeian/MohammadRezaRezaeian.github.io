@@ -1,7 +1,7 @@
 ---
 layout: page
 title: Portfolio Manager in MQL5
-description: Trading strategies vary widely, making it impractical to create a single algorithm that supports all of them. The challenge lies in designing a bot capable of managing diverse strategies effectively. Portfolio management introduces additional complexity due to interdependencies between strategies. Here I address some of these challenges by providing a modular and extensible framework in MQL5 for managing multiple trading strategies while enforcing portfolio rules and limitations. This README introduces the approach, limitations, and some solutions implemented in this project for robust portfolio management.
+description: An OOP Designed Structure to Handle Portfolio Execution Complexity
 img: assets/img/PortfolioManager.jpg
 importance: 1
 category: MQL

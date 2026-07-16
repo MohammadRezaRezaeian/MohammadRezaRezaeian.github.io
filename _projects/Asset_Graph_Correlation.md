@@ -1,7 +1,7 @@
 ---
 layout: page
 title: Asset Graph Correlation
-description: Graph Theory Approach to Market Analysis
+description: Graph Theory Approach to Market Analysis & it's Topology
 img: assets/img/Correlation_Graph.jpg
 importance: 2
 category: Quant Analysis
@@ -131,6 +131,24 @@ When you map a financial network using Fruchterman-Reingold, the underlying phys
 * **Attraction (Macro Drivers):** The springs represent dominant macroeconomic drivers—such as interest rate hikes, inflation shocks, or thematic manias (e.g., the AI boom). These macro forces override individual asset fundamentals, acting as tight springs that force otherwise distinct companies to trade as a single, correlated block.
 * **Stability / Equilibrium (Market Pricing):** The final layout of the graph is the physical equilibrium state. It is the visual representation of the market balancing idiosyncratic risk (repulsion) with systemic risk (attraction). When the graph cools and settles, you are looking at the true, underlying structure of the current financial regime.
 
+**5. Temperature & System Energy**
+In the Fruchterman-Reingold force-directed algorithm, **Temperature** ($T$) dictates the maximum distance a node can move in a single iteration. It follows a simulated annealing cooling schedule. A standard exponential cooling formula at iteration $t$ is:
+
+$$T_t = T_0 \cdot \alpha^t$$
+
+Where:
+* $T_0$ is the initial temperature.
+* $\alpha$ is the cooling rate (a constant $< 1$).
+
+As $T \to 0$, the algorithm reaches an equilibrium state that minimizes the total **System Potential Energy** ($U$). This energy metric is the sum of the attractive spring potentials and the repulsive electrostatic potentials:
+
+$$U = \sum_{(i,j) \in E} \frac{\|p_i - p_j\|^3}{3k} - \sum_{i \neq j} k^2 \ln(\|p_i - p_j\|)$$
+
+Where:
+* $\|p_i - p_j\|$ is the geometric distance between nodes $i$ and $j$.
+* $k$ is the optimal distance constant.
+
+
 #### Representation of Fruchterman-Reingold Graph
 <img src="./Fruchterman-Reingold.jpg/" alt="Fruchterman-Reingold" width="100%">
 
@@ -169,6 +187,16 @@ When mapping a financial correlation network using Kamada-Kawai, the focus shift
 * **The Global Macro-Structure:** Because Kamada-Kawai connects every node to every other node with a mathematical spring, it perfectly preserves the global shape of the market. Fruchterman-Reingold is great for seeing tight individual sectors, but Kamada-Kawai is vastly superior for understanding the grand hierarchy of asset classes (e.g., exactly how the Bond market sits in relation to the Equity market and Commodities).
 * **Degrees of Separation (Transmission Mechanisms):** The shortest path $d_{ij}$ represents the economic chain of contagion. If an inflation shock hits Energy stocks, how many structural steps does it take for that shock to transmit to Tech stocks? Kamada-Kawai spaces assets out perfectly based on these transmission mechanisms.
 * **Structural Stress (Market Dislocations):** In the algorithm, "stress" occurs when nodes cannot be placed at their ideal distance. Economically, if you force this algorithm to plot a highly stressed graph over a short time window, it reveals market dislocations. It shows assets that are being forced into tighter correlations than their fundamental structure dictates—often signaling an impending mean-reversion, a pairs-trading opportunity, or a breakdown in standard market logic.
+
+**5. Total Stress Energy, $E$**
+The Kamada-Kawai algorithm aims to minimize the total mechanical stress ($E$) of a system of springs connecting all pairs of nodes. The objective function is:
+
+$$E = \sum_{i=1}^{|V|-1} \sum_{j=i+1}^{|V|} \frac{1}{2} k_{ij} (\|p_i - p_j\| - l_{ij})^2$$
+
+Where:
+* $\|p_i - p_j\|$ is the actual 2D geometric distance between nodes.
+* $l_{ij} = L \cdot d_{ij}$ is the *ideal* geometric distance, based on the shortest graph-theoretic path ($d_{ij}$).
+* $k_{ij} = \frac{K}{d_{ij}^2}$ is the spring constant (stiffness) between the nodes.
 
 #### Representation of Kamada-Kawai Graph
 <img src="./Kamada-Kawai.jpg/" alt="Kamada-Kawai" width="100%">
@@ -211,6 +239,16 @@ In a financial context, the Spectral Layout acts very similarly to Principal Com
 * **Systemic Partitioning:** Spectral methods are famous for identifying deep, structural cuts in a network. If the market is heavily divided (e.g., during a geopolitical shock where defense/energy decouple from everything else), this algorithm will mathematically cleave those assets into highly distinct, segregated visual groups.
 * **Deterministic Risk:** Because the math is exact and not based on a random initial seed, it provides a deterministic view of risk. If two assets are placed next to each other in a Spectral Layout, it is because they share nearly identical exposure to the fundamental, latent eigenvectors driving the entire system.
 
+**5. Trace of the Scaled Laplacian**
+The Spectral layout finds optimal node coordinates by minimizing the trace of the position matrix scaled by the Graph Laplacian. The mathematical metric evaluated is:
+
+$$\text{Trace} = \text{Tr}(P^T L P)$$
+
+Where:
+* $P$ is the $n \times 2$ position matrix containing the $(x, y)$ coordinates of all nodes.
+* $L$ is the Graph Laplacian matrix, defined as $L = D - A$.
+* $D$ is the Degree Matrix and $A$ is the Adjacency Matrix.
+
 #### Representation of Spectral Layout Graph
 <img src="./Spectral_Layout.jpg/" alt="Spectral_Layout" width="100%">
 
@@ -242,6 +280,17 @@ Barnes-Hut perfectly mirrors the realities of **top-down portfolio management an
 * **Macro vs. Micro Focus:** As an investor holding Apple, you care deeply about the specific, granular correlations to Microsoft or Google (which the algorithm calculates exactly). However, you do not need to know the specific, granular relationship between Apple and every single micro-cap mining stock in Australia. The algorithm intuitively groups those miners into a "Mining Sector Center of Mass" and calculates a single macro repulsion force against Apple.
 * **Massive Scalability:** Standard graph layouts choke when analyzing global markets. Barnes-Hut allows quantitative analysts to map entire global equities universes (10,000+ assets) simultaneously.
 * **Systemic Gravity:** By visualizing the "centers of mass" of different quadtree branches, analysts can see the gravitational pull of entire market sectors. A massive, heavily capitalized sector (like US Tech) acts as a dense super-node, exerting massive topological gravity that shapes the layout of emerging markets, bonds, and commodities around it.
+
+**5. Force Approximation Ratio**
+The Barnes-Hut algorithm speeds up repulsive force calculations by grouping distant nodes into "super-nodes" (centers of mass). It determines whether to approximate a cluster using the spatial ratio $\theta$:
+
+$$\theta = \frac{s}{d}$$
+
+Where:
+* $s$ is the width (size) of the bounding box containing the cluster of distant nodes.
+* $d$ is the geometric distance from the target node to the cluster's center of mass.
+
+If $\frac{s}{d}$ is less than a predefined threshold (usually around $0.5$), the entire cluster is approximated as a single point of mass, bypassing the need for pairwise calculations.
 
 #### Representation of Barnes-Hut Simulation Graph
 <img src="./Barnes-Hut_Representation.jpg/" alt="Barnes-Hut_Representation" width="100%">
