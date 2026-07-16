@@ -150,7 +150,7 @@ Where:
 
 
 #### Representation of Fruchterman-Reingold Graph
-<img src="/assets/img/Asset_Graph_Correlation/Fruchterman-Reingold.jpg/" alt="Fruchterman-Reingold" width="100%">
+<img src="/assets/img/Asset_Graph_Correlation/Fruchterman-Reingold.jpg" alt="Fruchterman-Reingold" width="100%">
 
 ---
 
@@ -199,7 +199,7 @@ Where:
 * $k_{ij} = \frac{K}{d_{ij}^2}$ is the spring constant (stiffness) between the nodes.
 
 #### Representation of Kamada-Kawai Graph
-<img src="/assets/img/Asset_Graph_Correlation/Kamada-Kawai.jpg/" alt="Kamada-Kawai" width="100%">
+<img src="/assets/img/Asset_Graph_Correlation/Kamada-Kawai.jpg" alt="Kamada-Kawai" width="100%">
 
 ---
 
@@ -250,7 +250,7 @@ Where:
 * $D$ is the Degree Matrix and $A$ is the Adjacency Matrix.
 
 #### Representation of Spectral Layout Graph
-<img src="/assets/img/Asset_Graph_Correlation/Spectral_Layout.jpg/" alt="Spectral_Layout" width="100%">
+<img src="/assets/img/Asset_Graph_Correlation/Spectral_Layout.jpg" alt="Spectral_Layout" width="100%">
 
 ---
 
@@ -293,7 +293,7 @@ Where:
 If $\frac{s}{d}$ is less than a predefined threshold (usually around $0.5$), the entire cluster is approximated as a single point of mass, bypassing the need for pairwise calculations.
 
 #### Representation of Barnes-Hut Simulation Graph
-<img src="/assets/img/Asset_Graph_Correlation/Barnes-Hut_Representation.jpg/" alt="Barnes-Hut_Representation" width="100%">
+<img src="/assets/img/Asset_Graph_Correlation/Barnes-Hut_Representation.jpg" alt="Barnes-Hut_Representation" width="100%">
 
 
 ---
