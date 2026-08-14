@@ -22,4 +22,40 @@ $max-content-width: {{ site.max_width }};
   "tabler-icons/tabler-icons.scss",
   "tabler-icons/tabler-icons-filled.scss",
   "tabler-icons/tabler-icons-outline.scss"
+  ,
+  "custom/stepper"
 ;
+
+/* Fallback: ensure stepper styles are present even if import path is skipped
+   (some Sass import setups can miss partials). Duplicated here so the
+   `ol.stepper` rules are guaranteed to appear in the compiled CSS. */
+ol.stepper {
+  padding: 1.5rem;
+  margin: 1em -1.5rem;
+  overflow-x: hidden;
+  overflow-y: auto;
+  counter-reset: section;
+  list-style: none;
+}
+
+ol.stepper li {
+  position: relative;
+  padding-left: 3.5rem;
+  margin-bottom: 1rem;
+}
+
+ol.stepper li::before {
+  counter-increment: section;
+  content: counter(section) ".";
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 2.4rem;
+  height: 2.4rem;
+  line-height: 2.4rem;
+  border-radius: 50%;
+  text-align: center;
+  background: #59698d;
+  color: #fff;
+  font-weight: 600;
+}
