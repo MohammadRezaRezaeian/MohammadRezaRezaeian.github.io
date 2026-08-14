@@ -1,124 +1,371 @@
 ---
 layout: page
-title: TradeFilters Framework for MQL5
-description: A Filtering Protective Layer between EAs and Broker
+title: GuardTrades Library for MQL5
+description: A Guarding Protective Layer between EAs and Broker
 img: assets/img/TradingGuard_Anubis.jpg
 importance: 2
 category: MQL
 related_publications: true
 ---
 
-## Table of Contents
 
-- [Table of Contents](#table-of-contents)
-- [Overview](#overview)
-- [Architecture](#architecture)
-- [Architecture Flowchart](#architecture-flowchart)
-- [How It Works](#how-it-works)
-- [Filter Modules](#filter-modules)
-  - [GuardFilter – Account and Risk Protection](#guardfilter--account-and-risk-protection)
-  - [SymbolFilter – Market and Symbol Quality](#symbolfilter--market-and-symbol-quality)
-  - [CalendarFilter – Days, Hours, and News Control](#calendarfilter--days-hours-and-news-control)
-  - [PriceAreaFilter – Price Zone Control](#priceareafilter--price-zone-control)
-  - [TechnicalFilter – Indicator-Based Confluence](#technicalfilter--indicator-based-confluence)
-- [Sample Expert Advisor](#sample-expert-advisor)
-- [How to Use](#how-to-use)
-- [Benefits](#benefits)
-- [Extensibility](#extensibility)
-- [License](#license)
+## Table of Contents
+1. [Overview](#overview)
+2. [How It Works](#how-it-works)
+3. [Installation](#installation)
+4. [How to Activate Modules](#how-to-activate-modules)
+5. [Using the MA Cross Example](#using-the-ma-cross-example)
+6. [Module Features](#module-features)
+    - [Guard Filter](#1-guard-filter-g_positionsmqh)
+    - [Symbol Filter](#2-symbol-filter-g_symbolsmqh)
+    - [Calendar Filter](#3-calendar-filter-g_calendarmqh)
+    - [Price Area Filter](#4-price-area-filter-g_priceareamqh)
+    - [Technical Filter](#5-technical-filter-g_technicalmqh)
+7. [Utility Methods](#utility-methods)
+8. [Contributing & Roadmap](#contributing--roadmap)
+
+---
 
 ## Overview
-
-The TradeFilters Framework is a modular trading protection and validation system for MQL5 that acts as a universal gatekeeper between your Expert Advisor and the broker.[web:10][web:33] The primary goal is to separate trading logic from trading safety: your EA focuses on generating signals while the framework decides whether those signals are safe to execute. This design reduces catastrophic mistakes, makes risk rules reusable across multiple EAs, and allows you to toggle or tune filters without touching core strategy code.[web:38]
-
-The framework extends the standard MQL5 `CTrade` class with a mediator pattern that orchestrates multiple independent filter modules.[web:33] Each trade request passes through a sequential validation chain covering account protection, market quality, time windows, price zones, and technical confluence before reaching the broker.
-
-## Architecture
-
-The architecture centers around the **TradeFilters class**, which inherits from MQL5's `CTrade` and acts as a single gateway for all trading operations.[web:33][web:38] The mediator manages five independent filter modules that are conditionally compiled based on preprocessor flags:
-
-- **GuardFilter**: Account protection (risk limits, margin, position caps, environment checks)
-- **SymbolFilter**: Market quality validation (spread, liquidity, session, volatility)
-- **CalendarFilter**: Time-based trading rules (days, hours, news windows)
-- **PriceAreaFilter**: Price zone control (high/low bands, fractals, round numbers)
-- **TechnicalFilter**: Indicator-based confirmation (ADX, ATR, MA, RSI, MACD)
-
-Each module is instantiated only when its corresponding `#define` flag is set, allowing lightweight configurations for specific needs.[web:10] The mediator overrides all major `CTrade` methods to inject the filter chain before broker execution.[web:33]
-
-The framework uses a **fail-fast validation chain**: when any filter rejects a trade, the chain stops immediately with detailed logging, and control returns to the EA without sending an order. Only when all enabled filters approve does the underlying `CTrade` method execute.[web:10][web:33]
-
-## Architecture Flowchart
-
-<div class="text-center">
-    <img src="{{ '/assets/img/flowcharts/TradeFilters_Architecture.svg' | relative_url }}" alt="TradeFilters Architecture Flowchart" class="img-fluid">
-</div>
+`GuardTrades` is a custom MQL5 wrapper built directly on top of the standard `CTrade` library. Its primary purpose is to act as a security firewall for Expert Advisors (EAs). Before any trade is opened or modified, `GuardTrades` runs the requested order through a series of enabled filter modules to ensure the trade complies with strict risk management, technical, and environmental rules.
 
 ## How It Works
+The core of the library is the `CGuardTrades` class, which inherits from `CTrade`. 
+It overrides standard trading functions such as `Buy()`, `Sell()`, `OrderOpen()`, and `PositionOpen()`. When an EA calls these methods, `CGuardTrades` first intercepts the request and runs the `ApplyFilters()` method. 
 
-The Expert Advisor begins by defining which filter modules to activate using preprocessor directives at the top of the file. After including the main `tradingFilter.mqh` header, a single `TradeFilters` object is created that serves as the trading interface throughout the EA's lifetime.[web:10]
+If **all** active filters pass, the order is routed to the underlying `CTrade` method and executed. If **any** filter fails, the trade is blocked and a warning is printed to the terminal.
 
-During initialization, the mediator instantiates only the enabled filter modules and configures expert context (symbol, timeframe, point value, digits). The EA accesses these via helper methods when creating indicators or calculating stop loss values.
+The overridden methods include:
+| Method | Description |
+|---|---|
+| `Buy()` / `Sell()` | Market orders |
+| `BuyLimit()` / `SellLimit()` | Limit pending orders |
+| `BuyStop()` / `SellStop()` | Stop pending orders |
+| `OrderOpen()` / `OrderModify()` | Generic order operations |
+| `PositionOpen()` | Direct position opening |
 
-At runtime, whenever the EA's signal logic detects an entry or exit condition, it calls a mediator method such as `Buy()` or `Sell()` instead of using `CTrade` directly. The mediator immediately invokes its internal filter chain with the full trade context.[web:33]
+## Installation
 
-Inside the filter chain, each enabled filter receives the trade parameters and performs its validation checks in strict sequence. If any filter returns a rejection, the mediator logs the specific reason and returns control to the EA without executing the trade.[web:10] If all filters pass, the original `CTrade` method is invoked and the order request is sent to the broker.[web:33]
+> **Important:** You must copy the entire `GuardTrades` folder into the same directory as your Expert Advisor **before** including the library.
 
-The framework also provides optional housekeeping functionality that automatically closes the EA's positions and cancels pending orders near day-end based on the magic number.
+### Step-by-Step
 
-## Filter Modules
+1. **Copy the `GuardTrades` folder** into your EA's directory inside the MetaTrader 5 `Experts` folder. Your file structure should look like this:
 
-### GuardFilter – Account and Risk Protection
+```
+MQL5/
+└── Experts/
+    └── YourEAFolder/
+        ├── YourEA.mq5
+        └── GuardTrades/
+            ├── GuardTrades.mqh
+            ├── G_Positions.mqh
+            ├── G_Symbols.mqh
+            ├── G_Calendar.mqh
+            ├── G_PriceArea.mqh
+            ├── G_Technical.mqh
+            └── Indicators/
+                └── Fractal.mq5
+```
 
-GuardFilter provides account-level protection by validating trading environment, connectivity, and risk parameters before allowing any trade.[web:33] It checks terminal and broker permissions, margin adequacy as a percentage of equity, maximum position counts per EA, per-trade volume limits, and stop-loss-based risk calculations in both percentage and absolute terms. All failures trigger detailed log messages for troubleshooting.
+2. **Compile the custom indicator** `GuardTrades/Indicators/Fractal.mq5` if you plan to use the Price Area Filter's Fractals feature. Open it in MetaEditor and press **F7** to compile.
 
-### SymbolFilter – Market and Symbol Quality
+3. **Open your EA file** (e.g., `YourEA.mq5`) and add the `#define` macros for the modules you want, then include the library:
 
-SymbolFilter ensures the chosen symbol and current market conditions meet minimum quality standards.[web:38] It validates broker tradability, spread thresholds, trading session status, liquidity through session volume, volatility ranges to avoid flat markets, and execution constraints like freeze levels and minimum stop distances. This module acts as a quality gate that prevents trading during adverse market microstructure conditions.
+```mql5
+// Step 1: Define the modules you need (BEFORE the #include)
+#define GUARD_MODULE
+#define SYMBOL_MODULE
+#define CALENDAR_MODULE
+#define PRICE_AREA_MODULE
+#define TECHNICAL_MODULE
 
-### CalendarFilter – Days, Hours, and News Control
+// Step 2: Include the library (path is relative to your EA file)
+#include "./GuardTrades/GuardTrades.mqh"
+```
 
-CalendarFilter makes strategies time-aware by enforcing day-of-week and hour-of-day restrictions.[web:8][web:41] It provides individual toggles for each weekday, supports up to three independent time windows per day for session-based strategies, includes placeholder integration for economic news blackout periods, and allows symbol-specific volume restrictions during volatile hours. This eliminates weekend gaps and avoids low-liquidity periods.
+4. **Replace `CTrade` with `CGuardTrades`** in your EA. Wherever you previously declared `CTrade trade;`, change it to:
 
-### PriceAreaFilter – Price Zone Control
+```mql5
+CGuardTrades trade;
+```
 
-PriceAreaFilter controls where in the price ladder trades are permitted by defining forbidden zones around key technical levels. It creates deviation bands around recent highs and lows over configurable lookback periods, identifies Bill Williams Fractal turning points as support and resistance zones, and marks round number levels as psychological barriers. Trades are blocked when price enters any enabled zone, helping avoid false breakouts and congestion areas while encouraging entries in momentum regions.
+5. **Compile your EA** in MetaEditor (F7). All filter input parameters will automatically appear in the EA's settings panel when you attach it to a chart.
 
-### TechnicalFilter – Indicator-Based Confluence
+## How to Activate Modules
+To save performance and memory, filters are modular. You can enable or disable them using preprocessor macros (`#define`) at the very top of your EA, **before** including the library.
 
-TechnicalFilter adds technical confirmation layers on top of raw strategy signals.[web:10][web:42] It supports optional requirements for trend strength via ADX thresholds, volatility gates using ATR minimums, trend direction alignment with moving averages, momentum extreme filtering through RSI overbought/oversold levels, volatility expansion comparisons between timeframes, and momentum direction confirmation via MACD crossovers. Each sub-filter is independently toggled, allowing flexible single-indicator checks or full multi-indicator confluence systems.
+```mql5
+// Enable desired modules
+#define GUARD_MODULE
+#define SYMBOL_MODULE
+#define CALENDAR_MODULE
+#define PRICE_AREA_MODULE
+#define TECHNICAL_MODULE
 
-## Sample Expert Advisor
+// Include the wrapper after definitions
+#include "./GuardTrades/GuardTrades.mqh"
+```
 
-The framework includes a minimal Moving Average crossover EA that demonstrates integration.[web:11] The EA generates signals based on fast and slow MA crosses and routes all trades through the mediator object instead of using `CTrade` directly.[web:33] This automatically subjects every trade to the full filter chain while keeping strategy code focused purely on signal detection. The sample shows proper use of expert context helpers, stop loss calculations, and optional end-of-day position cleanup.
+If a macro is not defined, its corresponding filter is entirely bypassed and excluded from compilation. For example, if you only need risk management and time filtering:
 
-## How to Use
+```mql5
+#define GUARD_MODULE
+#define CALENDAR_MODULE
 
-To integrate the framework into a new Expert Advisor:
+#include "./GuardTrades/GuardTrades.mqh"
+```
 
-1. Define desired filter modules at the top of your EA using preprocessor directives
-2. Include the library header and create a single mediator object
-3. Replace all direct `CTrade` calls with mediator methods for orders and positions
-4. Use expert context helpers when creating indicators and calculating prices
-5. Configure filter input parameters to tune behavior for your strategy
+This approach keeps the compiled EA lightweight—only the filters you actually use consume memory and CPU.
 
-The mediator automatically applies all enabled filters to every trade request, with failures logged clearly for troubleshooting.[web:10][web:33]
+## Using the MA Cross Example
+The included `MAcross.mq5` file demonstrates a complete working EA that uses all five GuardTrades modules.
 
-## Benefits
+### How the example is structured
 
-**Robust Safety**: Multi-layered account protection prevents dangerous trading conditions and excessive risk exposure.[web:33]
+1. **Module Activation**: At the top of the file, all five modules are enabled via `#define`.
+2. **EA Inputs**: Standard strategy inputs are declared (`FastMAPeriod`, `SlowMAPeriod`, `LotSize`, `StopLoss`, `TakeProfit`).
+3. **Global Instance**: A single `CGuardTrades trade;` object is created globally.
+4. **Initialization (`OnInit`)**: MA indicator handles are created using `trade.ExpertSymbol()` and `trade.ExpertTimeFrame()` — these helper methods return the chart's symbol and timeframe automatically.
+5. **Signal Generation**: `buySignal()` and `sellSignal()` detect fast/slow MA crossovers.
+6. **Execution (`OnTick`)**: When a signal fires, the EA calls `trade.Buy()` or `trade.Sell()`. **You do not need to manually check risk, spread, time, or any other condition** — the `trade` object runs every enabled filter automatically before executing.
+7. **Day-End Cleanup**: `trade.CloseAllPositionsAtDayEnd()` is called every tick to close all expert positions and cancel pending orders at 23:55 server time.
 
-**Quality Focus**: Filters across time, market structure, price location, and technical indicators ensure only high-probability setups execute.
+```mql5
+#define GUARD_MODULE
+#define SYMBOL_MODULE
+#define CALENDAR_MODULE
+#define PRICE_AREA_MODULE
+#define TECHNICAL_MODULE
 
-**Clean Code**: Complete separation between signal generation and safety validation reduces EA complexity and cognitive load.[web:10]
+input int FastMAPeriod = 10;
+input int SlowMAPeriod = 30;
+input double LotSize = 0.1;
+input double StopLoss = 200;
+input double TakeProfit = 400;
 
-**Reusability**: Standardized risk management layer works across multiple strategies and trading styles.[web:38]
+#include "./filters/GuardTrades.mqh"
 
-**Flexibility**: Independent filter modules can be toggled, tuned, or extended without modifying strategy logic.[web:10]
+// Global instance — replaces CTrade
+CGuardTrades trade;
 
-## Extensibility
+void OnTick()
+{
+   MqlTick tick;
+   if(!SymbolInfoTick(trade.ExpertSymbol(),tick)) return;
 
-The framework supports straightforward extension through its modular architecture. New filters can be added by creating classes with standard validation interfaces and integrating them into the mediator under new preprocessor flags.[web:10] Existing filters can be enhanced independently without affecting other modules, such as connecting real economic calendar data to CalendarFilter.[web:41] The mediator itself can be extended with additional context methods for consistency across strategies.[web:33] The clear separation of concerns and well-defined interfaces make the framework adaptable to diverse trading styles, risk management philosophies, and portfolio management systems.[web:10][web:38]
+   trade.CloseAllPositionsAtDayEnd();
 
-## License
+   // Check buy signal
+   if(buySignal())
+   {
+      // Close opposite position first
+      if(PositionSelect(trade.ExpertSymbol()) && PositionGetInteger(POSITION_TYPE) == POSITION_TYPE_SELL)
+         trade.PositionClose(trade.ExpertSymbol());
 
-This project is licensed under the TradeYaar License - see the [LICENSE](/projects/MQL5_tradefilters/LICENSE.md) file for details.
+      // Open buy — filters are checked automatically inside trade.Buy()
+      if(!PositionSelect(trade.ExpertSymbol()))
+         trade.Buy(LotSize, trade.ExpertSymbol(), tick.bid,
+                   tick.bid - StopLoss * trade.ExpertPoint(),
+                   tick.bid + TakeProfit * trade.ExpertPoint());
+   }
+
+   // Check sell signal
+   if(sellSignal())
+   {
+      if(PositionSelect(trade.ExpertSymbol()) && PositionGetInteger(POSITION_TYPE) == POSITION_TYPE_BUY)
+         trade.PositionClose(trade.ExpertSymbol());
+
+      if(!PositionSelect(trade.ExpertSymbol()))
+         trade.Sell(LotSize, trade.ExpertSymbol(), tick.ask,
+                    tick.ask + StopLoss * trade.ExpertPoint(),
+                    tick.ask - TakeProfit * trade.ExpertPoint());
+   }
+}
+```
+
+## Module Features
+
+### 1. Guard Filter (`G_Positions.mqh`)
+This module manages account-level and trade-level risk constraints. It is the most critical safety layer.
+
+**Input Parameters:**
+| Input | Default | Description |
+|---|---|---|
+| `InpMaxPositions` | 5 | Maximum total open positions on the entire account |
+| `InpMaxExpertPositions` | 5 | Maximum open positions created by this specific EA |
+| `InpMaxLot` | 1.0 | Maximum lot size allowed per single trade |
+| `InpMaxTradeRiskPercent` | 2.0% | Maximum risk as a percentage of account balance per trade |
+| `InpMaxTradeRiskMoney` | $1000 | Maximum risk in dollars per trade |
+| `InpMinFreeMarginPercent` | 100% | Minimum free margin percentage (free margin / equity) |
+| `InpMinMarginLevel` | 100% | Minimum margin level before new trades are blocked |
+| `InpAllowTradingReal` | true | If false, blocks trading on real (non-demo) accounts |
+
+**Checks Performed:**
+* **Environment Safety**: Verifies that trading is enabled in the terminal, the broker allows trading on the account, and the terminal is connected to the server. If the account is a real account and `InpAllowTradingReal` is `false`, trading is blocked.
+* **Max Positions**: Counts all open positions on the account and compares against `InpMaxPositions`. Then counts only positions opened by this EA (matched by Magic Number) and compares against `InpMaxExpertPositions`.
+* **Lot & Risk Constraints**: Blocks the trade if the requested volume exceeds `InpMaxLot`. For risk calculation, it uses the Stop Loss distance, tick value, and tick size to compute the dollar risk. It then checks both the percentage risk (`riskAmount / balance * 100`) and absolute dollar risk against their respective limits.
+* **Margin Safety**: Calculates `(FreeMargin / Equity) * 100` and blocks if below `InpMinFreeMarginPercent`. Also checks the broker-reported Margin Level and blocks if below `InpMinMarginLevel` (only when margin is actively used).
+* **Spam Prevention**: Implements a hardcoded 2-second cooldown. If the EA attempts the exact same order type on the same symbol within 2 seconds, the trade is blocked. This protects against EA logic bugs that fire repeated orders on every tick.
+
+---
+
+### 2. Symbol Filter (`G_Symbols.mqh`)
+This module validates environmental and broker-level conditions for the specific trading pair.
+
+**Input Parameters:**
+| Input | Default | Description |
+|---|---|---|
+| `InpMaxSpreadPoints` | 30 | Maximum allowed spread in points |
+| `InpMaxSymbolPositions` | 3 | Maximum open positions for a single symbol |
+| `InpMaxSymbolLot` | 1.0 | Maximum total lot exposure on a single symbol |
+| `InpMaxSymbolRiskPercents` | 2.0% | Maximum total risk for a single symbol (% of balance) |
+| `InpMaxSymbolRiskMoney` | $1000 | Maximum total risk for a single symbol in dollars |
+
+**Checks Performed:**
+* **Symbol Tradability**: Confirms the broker allows orders on the symbol (`SYMBOL_ORDER_MODE`) and that the trade mode is `SYMBOL_TRADE_MODE_FULL`. Symbols in close-only or disabled mode are blocked.
+* **Fresh Quotes**: Retrieves the latest tick and verifies it is less than 1 second old. Stale tick data (e.g., during connection issues) will block the trade.
+* **Spread Safety**: Reads the current spread in points and blocks the trade if it exceeds `InpMaxSpreadPoints`. Invalid (zero or negative) spreads also trigger a block.
+* **Trade Session**: Queries `SymbolInfoSessionTrade()` to check if the market session is currently open. Trades outside session hours are blocked.
+* **Liquidity**: Checks the session tick volume (`SYMBOL_SESSION_VOLUME`) against a minimum threshold to avoid trading in illiquid conditions.
+* **Volatility**: Calculates intraday volatility as `(High - Low) / Point` and blocks if it falls below a minimum threshold.
+* **Execution Safety**: Warns about freeze levels and blocks if the stops level is excessively high (> 50 points).
+* **Symbol Exposure**: Scans all open positions for the given symbol and calculates current position count, total lots, and total monetary risk. It then checks whether adding the new trade would exceed `InpMaxSymbolPositions`, `InpMaxSymbolLot`, `InpMaxSymbolRiskMoney`, or `InpMaxSymbolRiskPercents`.
+
+---
+
+### 3. Calendar Filter (`G_Calendar.mqh`)
+Controls *when* the EA is permitted to trade based on time and days.
+
+**Input Parameters:**
+| Input | Default | Description |
+|---|---|---|
+| `TradeMonday` | true | Allow trading on Monday |
+| `TradeTuesday` | true | Allow trading on Tuesday |
+| `TradeWednesday` | true | Allow trading on Wednesday |
+| `TradeThursday` | true | Allow trading on Thursday |
+| `TradeFriday` | true | Allow trading on Friday |
+| `TradeSaturday` | true | Allow trading on Saturday |
+| `TradeSunday` | true | Allow trading on Sunday |
+| `TimeWindow1Start` | 00:00 | Time Window 1 start (HH:MM format) |
+| `TimeWindow1End` | 23:50 | Time Window 1 end (HH:MM format) |
+| `TimeWindow2Start` | 00:00 | Time Window 2 start (HH:MM format) |
+| `TimeWindow2End` | 00:00 | Time Window 2 end (disabled by default) |
+| `TimeWindow3Start` | 00:00 | Time Window 3 start (HH:MM format) |
+| `TimeWindow3End` | 00:00 | Time Window 3 end (disabled by default) |
+
+**Checks Performed:**
+* **Allowed Days**: Uses the server's current day of the week and checks against the boolean inputs. For example, setting `TradeFriday = false` will block all trades on Fridays.
+* **Time Windows**: Converts the start/end strings to minutes since midnight and checks if the current server time falls within any of the 3 defined windows. A window is considered disabled if its start and end are both `00:00`. The EA will only trade if the current time is inside **at least one** active window.
+* **Volatile Hours Protection**: As an additional hardcoded rule, high-volume trades (> 1.0 lots) on EURUSD are blocked during the 13:00–15:00 server time window to avoid volatile news-driven hours.
+
+---
+
+### 4. Price Area Filter (`G_PriceArea.mqh`)
+Ensures trades only happen in specific structural market zones based on deviation bands. Each sub-filter can be independently enabled or disabled. When enabled, the price **must** be inside the zone for the trade to be allowed.
+
+**Input Parameters:**
+| Input | Default | Description |
+|---|---|---|
+| `EnableHighLow` | false | Enable High/Low zone filter |
+| `HighLowTimeframe` | D1 | Timeframe to calculate High/Low |
+| `HighLowShift` | 1 | Starting candle to look back |
+| `HighLowDays` | 1 | Number of candles to scan for High/Low |
+| `HighLowDeviationPct` | 0.1% | Deviation band width around High/Low levels |
+| `EnableFractals` | false | Enable Fractals zone filter |
+| `FractalTimeframe` | D1 | Timeframe for fractal calculation |
+| `FractalDepth` | 5 | Number of recent fractals to consider |
+| `FractalDeviationPct` | 0.05% | Deviation band width around fractal levels |
+| `EnableRound` | false | Enable Round price zone filter |
+| `RoundDigits` | 2 | Rounding precision (e.g., 2 → 1.10, 1.20) |
+| `RoundDeviationPct` | 0.02% | Deviation band width around round levels |
+
+**Checks Performed:**
+* **High/Low Area**: Copies recent High and Low candle data for the configured timeframe and lookback period. Finds the highest high and lowest low, then checks if the current price falls within a symmetric deviation band (`level ± level * deviation%`). Visual horizontal lines are drawn on the chart showing the band boundaries.
+* **Fractals Area**: Uses a custom Bill Williams Fractals indicator (`filters/Indicators/Fractal.mq5`) to identify recent upper and lower fractal levels. The filter checks if the current price is within the deviation band of any recent fractal. The custom indicator must be compiled separately.
+* **Round Prices**: Calculates the nearest psychological round number based on `RoundDigits` (e.g., with `RoundDigits=2`, levels are 1.10, 1.20, 1.30, etc.). The trade is only allowed if the price is within the deviation band of that round level.
+* **Visual Feedback**: The filter draws horizontal lines on the chart for the upper band, lower band, and the center level, making it easy to visually confirm the active zone.
+
+> **Note:** If multiple sub-filters are enabled (e.g., both High/Low and Round), the price must be inside **all** enabled zones for the trade to pass.
+
+---
+
+### 5. Technical Filter (`G_Technical.mqh`)
+Blocks trades if current market momentum or trend contradicts standard technical indicators. Each indicator filter can be independently enabled or disabled.
+
+**Input Parameters:**
+| Input | Default | Description |
+|---|---|---|
+| `EnableADX` | false | Enable ADX trend strength filter |
+| `ADXTimeframe` | Current | Timeframe for ADX calculation |
+| `ADXPeriod` | 14 | ADX indicator period |
+| `ADXThreshold` | 25.0 | Minimum ADX value to allow trading |
+| `EnableATR` | false | Enable ATR volatility filter |
+| `ATRTimeframe` | Current | Timeframe for ATR calculation |
+| `ATRPeriod` | 14 | ATR indicator period |
+| `ATRThreshold` | 0.01 | Minimum ATR value to allow trading |
+| `EnableMA` | false | Enable Moving Average alignment filter |
+| `MATimeframe` | Current | Timeframe for MA calculation |
+| `MAPeriod` | 50 | MA period |
+| `MAMethod` | SMA | MA calculation method (SMA, EMA, etc.) |
+| `MAPrice` | Close | Applied price for MA |
+| `EnableRSI` | false | Enable RSI overbought/oversold filter |
+| `RSITimeframe` | Current | Timeframe for RSI calculation |
+| `RSIPeriod` | 14 | RSI period |
+| `RSIOverbought` | 70.0 | RSI level above which Buys are blocked |
+| `RSIOversold` | 30.0 | RSI level below which Sells are blocked |
+| `EnableATRCompare` | false | Enable ATR(x) > ATR(y) comparison filter |
+| `ATRPeriodX` / `ATRPeriodY` | 14 / 14 | Periods for the two ATR values |
+| `ATRTimeframeX` / `ATRTimeframeY` | Current / H1 | Timeframes for the two ATR values |
+| `EnableMACD` | false | Enable MACD momentum filter |
+| `MACDFast` / `MACDSlow` / `MACDSignal` | 12 / 26 / 9 | MACD EMA periods |
+| `MACDPrice` | Close | Applied price for MACD |
+
+**Checks Performed:**
+* **ADX Filter**: Reads the ADX indicator value. If `ADX <= ADXThreshold`, the trade is blocked. This ensures the market is trending strongly enough to justify entry.
+* **ATR Filter**: Reads the ATR value. If `ATR <= ATRThreshold`, the trade is blocked. This prevents entries in extremely low-volatility environments where price movement may not reach the Take Profit.
+* **MA Alignment Filter**: For buy-type orders, the current price must be **above** the Moving Average. For sell-type orders, the price must be **below** the MA. This ensures trades are aligned with the broader trend direction.
+* **RSI Filter**: For buy-type orders, blocks the trade if `RSI >= RSIOverbought` (e.g., 70). For sell-type orders, blocks if `RSI <= RSIOversold` (e.g., 30). This prevents entering against extreme momentum.
+* **ATR Compare Filter**: Compares two ATR values calculated on different timeframes/periods. The trade is only allowed if `ATR(x) > ATR(y)`. This is useful for confirming that short-term volatility exceeds longer-term norms.
+* **MACD Filter**: For buy-type orders, the MACD line must be **above** the Signal line. For sell-type orders, the MACD line must be **below** the Signal line. This confirms momentum direction before entry.
+
+---
+
+## Utility Methods
+
+The `CGuardTrades` class also provides several helper methods beyond filtering:
+
+| Method | Description |
+|---|---|
+| `ExpertSymbol()` / `ExpertSymbol(string)` | Get or set the EA's working symbol (defaults to `_Symbol`) |
+| `ExpertTimeFrame()` / `ExpertTimeFrame(ENUM_TIMEFRAMES)` | Get or set the EA's working timeframe (defaults to `_Period`) |
+| `ExpertPoint()` / `ExpertDigits()` | Get the chart's point size and digit count |
+| `ExpertPositionsTotal()` | Count open positions created by this EA (matched by Magic Number) |
+| `ExpertOrdersTotal()` | Count pending orders created by this EA |
+| `CloseAllPositionsAtDayEnd()` | At 23:55 server time, closes all EA positions and cancels pending orders |
+
+---
+
+## Contributing & Roadmap
+
+`GuardTrades` is an **open-source project** and we warmly invite the trading community to contribute, improve, and extend it. Whether you are an experienced MQL5 developer or just getting started, there are many ways to help:
+
+### Ideas for New Modules
+- **News Filter**: A real-time economic calendar filter using MQL5's built-in `Calendar*` functions to block trades around high-impact news events (NFP, CPI, FOMC, etc.).
+- **Correlation Filter**: Prevent opening correlated positions (e.g., long EURUSD and long GBPUSD simultaneously) to reduce portfolio risk.
+- **Drawdown Filter**: Block new trades when the account is experiencing a drawdown beyond a defined threshold.
+- **Session Filter**: Advanced session-based filtering (Asian, London, New York sessions) with customizable overlap handling.
+- **Equity Curve Filter**: Only allow trades when the EA's equity curve is above its own moving average (meta-strategy filtering).
+
+### How to Contribute
+1. **Fork** the repository
+2. **Create a new filter** following the existing module pattern (create a class with an `ApplyFilter()` method)
+3. **Add a `#define` macro** and conditional includes in `GuardTrades.mqh`
+4. **Submit a Pull Request** with a clear description of what your filter does
+
+### Reporting Issues
+If you find a bug, have a suggestion, or want to request a feature, please open an issue on the repository. All feedback is valuable.
+
+---
+
+> **Every EA deserves a guardian.** Help us build the most comprehensive trade safety library for MQL5. Together we can make algorithmic trading safer for everyone.
