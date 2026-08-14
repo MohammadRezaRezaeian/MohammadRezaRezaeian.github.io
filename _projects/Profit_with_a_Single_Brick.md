@@ -9,7 +9,7 @@ related_publications: true
 ---
 
 - **Figure 0:** Live Test on Demo from 2023-11-20 to 2025-09-18  
-  ![Live Test on Demo](/assets/img/Profit_with_a_Single_Brick/LiveResult.gif)
+  ![Live Test on Demo]({{ '/assets/img/Profit_with_a_Single_Brick/LiveResult.gif' | absolute_url }})
 
 ## Table of Contents
 
@@ -220,16 +220,16 @@ For clearer presentation, we analyzed the effect of each parameter on selected s
 - **Parameter 4** – Does not change mean values directly, but increases variance in maximum drawdown, which is highly relevant for risk management.
 
 - **Figure 1:** Parameter 1 impact on metrics
-  ![Figure 1: Parameter 1 Effect](/assets/img/Profit_with_a_Single_Brick/PCH_vs_params.png)
+  ![Figure 1: Parameter 1 Effect]({{ '/assets/img/Profit_with_a_Single_Brick/PCH_vs_params.png' | absolute_url }})
 
 - **Figure 2:** Parameter 2 impact on metrics
-  ![Figure 2: Parameter 2 Effect](/assets/img/Profit_with_a_Single_Brick/stop_loss_avg_vs_params.png)
+  ![Figure 2: Parameter 2 Effect]({{ '/assets/img/Profit_with_a_Single_Brick/stop_loss_avg_vs_params.png' | absolute_url }})
 
 - **Figure 3:** Parameter 3 impact on metrics
-  ![Figure 3: Parameter 3 Effect](/assets/img/Profit_with_a_Single_Brick/UR_MDD_vs_params.png)
+  ![Figure 3: Parameter 3 Effect]({{ '/assets/img/Profit_with_a_Single_Brick/UR_MDD_vs_params.png' | absolute_url }})
 
 - **Figure 4:** Parameter 4 impact on metrics  
-  ![Figure 4: Parameter 4 Effect](/assets/img/Profit_with_a_Single_Brick/PF_vs_params.png)
+  ![Figure 4: Parameter 4 Effect]({{ '/assets/img/Profit_with_a_Single_Brick/PF_vs_params.png' | absolute_url }})
 
 During the optimization process, performance metrics evolve over iterations. Ideally, optimization should improve them according to their natural definitions, but in practice, the results reveal nuanced behavior:
 
@@ -242,16 +242,16 @@ During the optimization process, performance metrics evolve over iterations. Ide
 ---
 
 - **Figure 5:** Profit Factor During Process
-  ![Figure 5: Profit Factor During Process](/assets/img/Profit_with_a_Single_Brick/line_PF.png)
+  ![Figure 5: Profit Factor During Process]({{ '/assets/img/Profit_with_a_Single_Brick/line_PF.png' | absolute_url }})
 
 - **Figure 6:** Percent of Change During Process
-  ![Figure 6: Percent of Change During Process](/assets/img/Profit_with_a_Single_Brick/line_PCH.png)
+  ![Figure 6: Percent of Change During Process]({{ '/assets/img/Profit_with_a_Single_Brick/line_PCH.png' | absolute_url }})
 
 - **Figure 7:** Unrealized Drawdown During Process
-  ![Figure 7: Unrealized Drawdown  During Process](/assets/img/Profit_with_a_Single_Brick/line_UR_MDD.png)
+  ![Figure 7: Unrealized Drawdown  During Process]({{ '/assets/img/Profit_with_a_Single_Brick/line_UR_MDD.png' | absolute_url }})
 
 - **Figure 8:** Averege of Stoploss During Process
-  ![Figure 8: Averege of Stoploss During Process](/assets/img/Profit_with_a_Single_Brick/line_stop_loss_avg.png)
+  ![Figure 8: Averege of Stoploss During Process]({{ '/assets/img/Profit_with_a_Single_Brick/line_stop_loss_avg.png' | absolute_url }})
 
 ### Optimized Results Analysis
 
@@ -265,16 +265,16 @@ The **Maximum Drawdown per Trade** is deeper in the test set compared to the tra
 Overall, this implies the strategy requires a longer time horizon to confidently prove profitability and to absorb and recover from its inherent risks.
 
 - **Figure 9:** Barchart to Compare Train and Test Values
-  ![Figure 9: Barchart to Compare Train and Test Values](/assets/img/Profit_with_a_Single_Brick/bar_train_vs_test_all_metrics.png)
+  ![Figure 9: Barchart to Compare Train and Test Values]({{ '/assets/img/Profit_with_a_Single_Brick/bar_train_vs_test_all_metrics.png' | absolute_url }})
 
 - **Figure 10:** Scatter Plot to Compare Train and Test Values
-  ![Figure 10: Scatter Plot to Compare Train and Test Values](/assets/img/Profit_with_a_Single_Brick/scatter_train_vs_test_all_metrics.png)
+  ![Figure 10: Scatter Plot to Compare Train and Test Values]({{ '/assets/img/Profit_with_a_Single_Brick/scatter_train_vs_test_all_metrics.png' | absolute_url }})
 
 - **Figure 11:** Histogram of Train and Test Differences
-  ![Figure 11: Histogram of Train and Test Differences](/assets/img/Profit_with_a_Single_Brick/hist_differences.png)
+  ![Figure 11: Histogram of Train and Test Differences]({{ '/assets/img/Profit_with_a_Single_Brick/hist_differences.png' | absolute_url }})
 
 - **Figure 12:** Boxplot to Compare Train and Test Data Deviation
-  ![Figure 12: Boxplot to Compare Train and Test Data Deviation](/assets/img/Profit_with_a_Single_Brick/boxplot_train_vs_test_metrics.png)
+  ![Figure 12: Boxplot to Compare Train and Test Data Deviation]({{ '/assets/img/Profit_with_a_Single_Brick/boxplot_train_vs_test_metrics.png' | absolute_url }})
 
 ### Final Strategy Outcome
 
@@ -285,7 +285,7 @@ We obtained the results and implemented them as an MQL4 Expert Advisor on the Wi
 The strategy has demonstrated consistent profitability while maintaining minimal risk. However, it is important to note that consistent performance does not imply perfection, and further monitoring and optimization may still be necessary.
 
 - **Figure 13:** Live Test on Demo from 2023-11-20 to 2025-09-18  
-  ![Figure 13: Live Test on Demo](/assets/img/Profit_with_a_Single_Brick/LiveResult.gif)
+  ![Figure 13: Live Test on Demo]({{ '/assets/img/Profit_with_a_Single_Brick/LiveResult.gif' | absolute_url }})
 
 ### Discussion of Findings
 
@@ -309,4 +309,4 @@ This insight emphasizes the importance of designing portfolios that are adaptive
 
 <a name="7-license"></a>
 
-This project is licensed under the TradeYaar License - see the [LICENSE](/_projects/Profit_with_a_Single_Brick/LICENSE.md) file for details.
+This project is licensed under the TradeYaar License - see the [LICENSE](https://github.com/MohammadRezaRezaeian/MohammadRezaRezaeian.github.io/blob/main/_projects/Profit_with_a_Single_Brick/LICENSE.md) file for details.

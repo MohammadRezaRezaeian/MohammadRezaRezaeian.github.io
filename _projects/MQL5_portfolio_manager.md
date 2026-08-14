@@ -33,7 +33,7 @@ To address the challenges of repetitive instructions, which impact both system a
 ## Architecture Flowchart
 
 <div class="text-center">
-    <img src="{{ '/assets/img/flowcharts/PortfolioManager_MQL5.svg' | relative_url }}" alt="Architecture Flowchart" class="img-fluid">
+    <img src="{{ '/assets/img/flowcharts/PortfolioManager_MQL5.svg' | absolute_url }}" alt="Architecture Flowchart" class="img-fluid">
 </div>
 
 ## How It Works
@@ -67,4 +67,4 @@ The framework is designed with a strong emphasis on extensibility, prioritizing 
 
 ## License
 
-This project is licensed under the TradeYaar License - see the [LICENSE](/_projects/MQL5_portfolio_manager/LICENSE.md) file for details.
+This project is licensed under the TradeYaar License - see the [LICENSE](https://github.com/MohammadRezaRezaeian/MohammadRezaRezaeian.github.io/blob/main/_projects/MQL5_portfolio_manager/LICENSE.md) file for details.

@@ -8,78 +8,76 @@ category: MQL
 related_publications: true
 ---
 
-1. **Copy the `GuardTrades` folder** into your EA's directory inside the MetaTrader 5 `Experts` folder. Your file structure should look like this:
 
-   ```
-   MQL5/
-   └── Experts/
-      └── YourEAFolder/
-         ├── YourEA.mq5
-         └── GuardTrades/
-            ├── GuardTrades.mqh
-            ├── G_Positions.mqh
-            ├── G_Symbols.mqh
-            ├── G_Calendar.mqh
-            ├── G_PriceArea.mqh
-            ├── G_Technical.mqh
-            └── Indicators/
-               └── Fractal.mq5
-   ```
+## Table of Contents
+1. [Overview](#overview)
+2. [How It Works](#how-it-works)
+3. [Installation](#installation)
+4. [How to Activate Modules](#how-to-activate-modules)
+5. [Using the MA Cross Example](#using-the-ma-cross-example)
+6. [Module Features](#module-features)
+    - [Guard Filter](#1-guard-filter-g_positionsmqh)
+    - [Symbol Filter](#2-symbol-filter-g_symbolsmqh)
+    - [Calendar Filter](#3-calendar-filter-g_calendarmqh)
+    - [Price Area Filter](#4-price-area-filter-g_priceareamqh)
+    - [Technical Filter](#5-technical-filter-g_technicalmqh)
+7. [Utility Methods](#utility-methods)
+8. [Contributing & Roadmap](#contributing--roadmap)
 
-2. **Compile the custom indicator** `GuardTrades/Indicators/Fractal.mq5` if you plan to use the Price Area Filter's Fractals feature. Open it in MetaEditor and press **F7** to compile.
+---
 
-3. **Open your EA file** (e.g., `YourEA.mq5`) and add the `#define` macros for the modules you want, then include the library:
+## Overview
+`GuardTrades` is a custom MQL5 wrapper built directly on top of the standard `CTrade` library. Its primary purpose is to act as a security firewall for Expert Advisors (EAs). Before any trade is opened or modified, `GuardTrades` runs the requested order through a series of enabled filter modules to ensure the trade complies with strict risk management, technical, and environmental rules.
 
-   ```mql5
-   // Step 1: Define the modules you need (BEFORE the #include)
-   #define GUARD_MODULE
-   #define SYMBOL_MODULE
-   #define CALENDAR_MODULE
-   #define PRICE_AREA_MODULE
-   #define TECHNICAL_MODULE
+## How It Works
+The core of the library is the `CGuardTrades` class, which inherits from `CTrade`. 
+It overrides standard trading functions such as `Buy()`, `Sell()`, `OrderOpen()`, and `PositionOpen()`. When an EA calls these methods, `CGuardTrades` first intercepts the request and runs the `ApplyFilters()` method. 
 
-   // Step 2: Include the library (path is relative to your EA file)
-   #include "./GuardTrades/GuardTrades.mqh"
-   ```
+If **all** active filters pass, the order is routed to the underlying `CTrade` method and executed. If **any** filter fails, the trade is blocked and a warning is printed to the terminal.
 
-4. **Replace `CTrade` with `CGuardTrades`** in your EA. Wherever you previously declared `CTrade trade;`, change it to:
+The overridden methods include:
+| Method | Description |
+|---|---|
+| `Buy()` / `Sell()` | Market orders |
+| `BuyLimit()` / `SellLimit()` | Limit pending orders |
+| `BuyStop()` / `SellStop()` | Stop pending orders |
+| `OrderOpen()` / `OrderModify()` | Generic order operations |
+| `PositionOpen()` | Direct position opening |
 
-   ```mql5
-   CGuardTrades trade;
-   ```
+## Installation
 
-5. **Compile your EA** in MetaEditor (F7). All filter input parameters will automatically appear in the EA's settings panel when you attach it to a chart.
+> **Important:** You must copy the entire `GuardTrades` folder into the same directory as your Expert Advisor **before** including the library.
 
 <h3 id="step-by-step">Step-by-Step</h3>
 
 <ol class="stepper">
-  <li>
-    <p><strong>Copy the <code>GuardTrades</code> folder</strong> into your EA's directory inside the MetaTrader 5 <code>Experts</code> folder. Your file structure should look like this:</p>
+   <li>
+      <p><strong>Copy the <code>GuardTrades</code> folder</strong> into your EA's directory inside the MetaTrader 5 <code>Experts</code> folder. Your file structure should look like this:</p>
 
-    <pre><code>MQL5/
+      <pre><code>MQL5/
 └── Experts/
-   └── YourEAFolder/
-      ├── YourEA.mq5
-      └── GuardTrades/
-         ├── GuardTrades.mqh
-         ├── G_Positions.mqh
-         ├── G_Symbols.mqh
-         ├── G_Calendar.mqh
-         ├── G_PriceArea.mqh
-         ├── G_Technical.mqh
-         └── Indicators/
-            └── Fractal.mq5
-    </code></pre>
-  </li>
+      └── YourEAFolder/
+            ├── YourEA.mq5
+            └── GuardTrades/
+                  ├── GuardTrades.mqh
+                  ├── G_Positions.mqh
+                  ├── G_Symbols.mqh
+                  ├── G_Calendar.mqh
+                  ├── G_PriceArea.mqh
+                  ├── G_Technical.mqh
+                  └── Indicators/
+                        └── Fractal.mq5
+      </code></pre>
+   </li>
 
-  <li>
-    <p><strong>Compile the custom indicator</strong> <code>GuardTrades/Indicators/Fractal.mq5</code> if you plan to use the Price Area Filter's Fractals feature. Open it in MetaEditor and press <strong>F7</strong> to compile.</p>
-  </li>
+   <li>
+      <p><strong>Compile the custom indicator</strong> <code>GuardTrades/Indicators/Fractal.mq5</code> if you plan to use the Price Area Filter's Fractals feature. Open it in MetaEditor and press <strong>F7</strong> to compile.</p>
+   </li>
 
-  <li>
-    <p><strong>Open your EA file</strong> (e.g., <code>YourEA.mq5</code>) and add the <code>#define</code> macros for the modules you want, then include the library:</p>
+   <li>
+      <p><strong>Open your EA file</strong> (e.g., <code>YourEA.mq5</code>) and add the <code>#define</code> macros for the modules you want, then include the library:</p>
 
-    <pre><code>// Step 1: Define the modules you need (BEFORE the #include)
+      <pre><code>// Step 1: Define the modules you need (BEFORE the #include)
 #define GUARD_MODULE
 #define SYMBOL_MODULE
 #define CALENDAR_MODULE
@@ -88,19 +86,19 @@ related_publications: true
 
 // Step 2: Include the library (path is relative to your EA file)
 #include "./GuardTrades/GuardTrades.mqh"
-    </code></pre>
-  </li>
+      </code></pre>
+   </li>
 
-  <li>
-    <p><strong>Replace <code>CTrade</code> with <code>CGuardTrades</code></strong> in your EA. Wherever you previously declared <code>CTrade trade;</code>, change it to:</p>
+   <li>
+      <p><strong>Replace <code>CTrade</code> with <code>CGuardTrades</code></strong> in your EA. Wherever you previously declared <code>CTrade trade;</code>, change it to:</p>
 
-    <pre><code>CGuardTrades trade;
-    </code></pre>
-  </li>
+      <pre><code>CGuardTrades trade;
+      </code></pre>
+   </li>
 
-  <li>
-    <p><strong>Compile your EA</strong> in MetaEditor (F7). All filter input parameters will automatically appear in the EA's settings panel when you attach it to a chart.</p>
-  </li>
+   <li>
+      <p><strong>Compile your EA</strong> in MetaEditor (F7). All filter input parameters will automatically appear in the EA's settings panel when you attach it to a chart.</p>
+   </li>
 </ol>
 
 ## How to Activate Modules

@@ -8,6 +8,12 @@ category: Quant Analysis
 related_publications: true
 ---
 
-<div style="width: 100vw; margin-left: calc(50% - 50vw); margin-top: 1.5rem; overflow: hidden;">
-  <iframe src="/assets/MultiAsset_Analysis.html" style="display: block; width: 100vw; height: 100vh; min-height: 100vh; border: 0; border-radius: 2px;" title="MultiAsset Analysis Dashboard"></iframe>
-</div>
+# MultiAsset Analysis
+
+This project features an interactive dashboard for treating stock markets as a multi-asset system.
+
+Due to platform limitations, the interactive dashboard cannot be embedded here. Please use the link below to access the full experience.
+
+![MultiAsset Analysis](https://mohammadrezarezaeian.github.io/assets/img/Correlation_Graph.jpg)
+
+### [➡️ Click here to view the interactive MultiAsset Analysis dashboard]({{ '/assets/MultiAsset_Analysis.html' | absolute_url }})
