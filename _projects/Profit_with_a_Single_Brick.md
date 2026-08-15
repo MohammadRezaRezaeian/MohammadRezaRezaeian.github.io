@@ -6,6 +6,7 @@ img: assets/img/optimization.jpg
 importance: 1
 category: Python
 related_publications: true
+medium_url: https://medium.com/@rezaeian.moh
 ---
 
 - **Figure 0:** Live Test on Demo from 2023-11-20 to 2025-09-18  

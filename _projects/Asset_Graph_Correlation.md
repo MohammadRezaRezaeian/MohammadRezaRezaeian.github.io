@@ -6,6 +6,7 @@ img: assets/img/Correlation_Graph.jpg
 importance: 2
 category: Quant Analysis
 related_publications: true
+medium_url: https://medium.com/@rezaeian.moh
 ---
 
 
