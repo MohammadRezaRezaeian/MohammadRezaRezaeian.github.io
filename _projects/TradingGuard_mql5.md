@@ -26,6 +26,11 @@ related_publications: true
 
 ---
 
+### 📖 Read on Medium
+[**Read the full article about GuardTrades on Medium**](https://medium.com/@rezaeian.moh)
+
+---
+
 ## Overview
 `GuardTrades` is a custom MQL5 wrapper built directly on top of the standard `CTrade` library. Its primary purpose is to act as a security firewall for Expert Advisors (EAs). Before any trade is opened or modified, `GuardTrades` runs the requested order through a series of enabled filter modules to ensure the trade complies with strict risk management, technical, and environmental rules.
 
