@@ -10,9 +10,6 @@ medium_url: https://medium.com/@rezaeian.moh
 ---
 
 
----
-
-
 # Multi-Asset Analysis via Graph Theory
 
 ## Table of Contents
