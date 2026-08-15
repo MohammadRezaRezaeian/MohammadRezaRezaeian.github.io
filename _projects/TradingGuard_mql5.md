@@ -6,7 +6,6 @@ img: assets/img/TradingGuard_Anubis.jpg
 importance: 2
 category: MQL
 related_publications: true
-medium_url: https://medium.com/@rezaeian.moh
 ---
 
 

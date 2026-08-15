@@ -6,7 +6,6 @@ img: assets/img/PortfolioManager.jpg
 importance: 1
 category: MQL
 related_publications: true
-medium_url: https://medium.com/@rezaeian.moh
 ---
 
 ## Table of Contents
