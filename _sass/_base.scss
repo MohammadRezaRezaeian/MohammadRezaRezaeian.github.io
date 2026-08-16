@@ -549,7 +549,9 @@ footer.sticky-bottom {
     border-radius: 1rem;
     padding: 1.25rem;
     min-height: 160px;
-    transition: transform 0.16s ease, box-shadow 0.16s ease;
+    transition:
+      transform 0.16s ease,
+      box-shadow 0.16s ease;
     background-color: var(--global-card-bg-color);
     color: inherit;
     text-decoration: none;
@@ -1483,6 +1485,3 @@ figure.cover {
     color: #23212d !important;
   }
 }
-
-
-
