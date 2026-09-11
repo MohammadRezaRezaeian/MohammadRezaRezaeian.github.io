@@ -1,8 +1,8 @@
 ---
 layout: page
 title: The Psychology of Price
-description: Quantization of market regiems!
-img: assets/img/Correlation_Graph.jpg
+description: Quantization of market regimes!
+img: assets/img/regimes.jpg
 importance: 3
 category: Quant Analysis
 related_publications: true
